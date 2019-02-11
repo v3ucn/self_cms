@@ -1,0 +1,79 @@
+.content label{
+    font-size: 13px;
+    font-weight: normal;
+}
+
+.content .form-group{
+    margin: 5px 0px;
+}
+/*.trade-head .form-group{*/
+    /*height: 20px;*/
+/*}*/
+/*.trade-head input{*/
+    /*height: 20px;*/
+/*}*/
+/*.trade-head .col-md*{*/
+    /*height: 30px;*/
+    /*padding: 0px 0px;*/
+    /*line-height: 20px;*/
+/*}*/
+.trade-head select{
+    height: 30px;
+}
+.checkbox-inline{
+    line-height: 20px;
+}
+.checkbox-inline input{
+    margin: 0px 0px;
+}
+#tradeTable th{
+    font-size: 13px;
+}
+
+.laydate_top{
+    height: 26px;
+}
+#total table{
+    background-color: lavender;
+}
+
+#total th{
+    height: 40px;
+    text-align:center;
+}
+#total td{
+    height: 40px;
+    text-align:center;
+}
+
+select{
+    font-size: 12px;
+}
+#tradeTable th{
+    padding: 10px 0px;
+    text-align: center;
+}
+#tradeTable tbody tr td:nth-child(3){
+    width: 200px;
+    /*background-color: #00F7DE;*/
+    padding: 8px 20px;
+    text-align: center;
+}
+
+#tradeTable tbody tr td:nth-child(5){
+
+    /*background-color: #00F7DE;*/
+    padding: 8px 5px;
+    width: 100px;
+    text-align: center;
+}
+#total_div{
+    margin-top: 10px;
+}
+/*.trade-head label{*/
+    /*font-size: 13px;*/
+/*}*/
+
+/*#total_div button{*/
+    /*margin: 10px 10px;*/
+/*}*/

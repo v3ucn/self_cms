@@ -1,0 +1,16 @@
+#balanceTable {
+    margin: 20px 0;
+    width: 50%;
+}
+
+.form-group {
+    margin-right: 30px;
+}
+
+.layui-input.form-control {
+    background-color: white;
+}
+
+.result {
+    margin-top: 30px;
+}

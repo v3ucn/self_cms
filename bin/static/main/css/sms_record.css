@@ -1,0 +1,30 @@
+.form-group {
+    margin-right: 30px;
+}
+
+.result {
+    margin-top: 30px;
+}
+
+.layui-input.form-control {
+    background-color: white;
+}
+
+#valueNew.invalid {
+    border-color: red;
+    border-width: 2px;
+}
+
+#valueEdit.invalid {
+    border-color: red;
+    border-width: 2px;
+}
+
+.remain {
+    color: lightgrey;
+    margin-left: 80px;
+}
+
+input[type=radio].space-ahead {
+    margin-left: 20px;
+}

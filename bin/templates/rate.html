@@ -1,0 +1,142 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+
+<%block name="title">汇率管理</%block>
+
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/common/css/toastr.css">
+  <script src="/static/common/js/jquery.dataTables.js"></script>
+  <script src="/static/main/js/rate.js"></script>
+  <script src="/static/common/js/toastr.js"></script>
+  <link rel="stylesheet" href="/static/common/css/combo.select.css">
+  <script src="/static/common/js/jquery.combo.select.js"></script>
+</%block>
+
+<%block name="page">
+    <div>
+        <div>
+            <h3 style="text-align: center">钱方外币汇率系统</h3>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" id="create" data-toggle="modal" data-target="" style="float: right;margin-right: 50px;margin-bottom: 15px;
+">新建</button>
+        </div>
+        <table id="rateTable" class="table table-striped"></table>
+    </div>
+
+    <div class="modal fade" id="myCreate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel" style="text-align: center"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group form-inline" style="text-align: center">
+                        <input type="text" id="rate_id" hidden>
+                        <label for="base_currency">基础货币：</label>
+##                         <input type="text" class="form-control" id="base_currency">
+                         <div class="form-group form-inline dowebok t1" style="text-align: left" id="base_currency_div">
+                            <select name="" id="base_currency_select" style="width: 200px;margin: 0px 0px;">
+                                <option value="">--请选择--</option>
+##                                 <option value="AED">AED - 阿联酋迪拉姆</option>
+##                                 <option value="AFN">AFN - 阿富汗尼</option>
+##                                 <option value="ALL">ALL - 阿尔巴尼列克</option>
+##                                 <option value="AMD">AMD - 亚美尼亚德拉姆</option>
+##                                 <option value="ANG">ANG - 荷兰盾</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="form-group form-inline" style="text-align: center">
+                        <label for="foreign_currency">&emsp;外币&emsp;：</label>
+##                         <input type="text" class="form-control" id="foreign_currency">
+                        <div class="form-group form-inline dowebok t1" style="text-align: left" id="foreign_currency_div">
+                            <select name="" id="foreign_currency_select" style="width: 200px;margin: 0px 0px;">
+                                <option value="">--请选择--</option>
+##                                 <option value="AED">AED - 阿联酋迪拉姆</option>
+##                                 <option value="AFN">AFN - 阿富汗尼</option>
+##                                 <option value="ALL">ALL - 阿尔巴尼列克</option>
+##                                 <option value="AMD">AMD - 亚美尼亚德拉姆</option>
+##                                 <option value="ANG">ANG - 荷兰盾</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group form-inline" style="text-align: center">
+                        <label for="rate">&emsp;汇率&emsp;：</label>
+                        <input type="text" class="form-control" id="rate" onkeyup="checkNum(this)">
+                    </div>
+                    <div class="form-group form-inline" style="text-align: center">
+                        <label for="unit">兑换单位：</label>
+                        <input type="text" class="form-control" id="unit">
+                    </div>
+                    <div class="form-group form-inline" style="text-align: center">
+                        <label for="rate_resources">汇率来源：</label>
+                        <input type="text" class="form-control" id="rate_resources">
+                    </div>
+                    <div class="form-group form-inline" style="text-align: center">
+                        <label for="comments">&emsp;备注&emsp;：</label>
+                        <!--<input type="texta" class="form-control" id="mark">-->
+                        <textarea class="form-control" name="beizhu" id="comments" cols="30" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-primary" id="create_confirm">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;提交&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+
+    <div class="modal fade" id="mySure" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="" style="text-align: center">请确认以下信息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group form-inline" style="text-align: center">
+                        <label for="original_rate">&emsp;原汇率&emsp;：&emsp;</label>
+                        <input type="text" class="form-control" id="original_rate" readonly="true">
+                    </div>
+                    <div class="form-group form-inline" style="text-align: center">
+                        <label for="changed_rate">更改后汇率：&emsp;</label>
+                        <input type="text" class="form-control" id="changed_rate" readonly="true">
+                    </div>
+                    <div style="text-align: center" id="five_al">
+                        <span style="text-align: center;color: red">更改后汇率与原汇率差距在5%以上</span>
+                    </div>
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-primary" id="sure_confirm">&emsp;确认&emsp;</button>
+                    <button type="button" class="btn btn-primary" id="sure_cancel">&emsp;取消&emsp;</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+##     查看历史
+    <div class="modal fade" id="history_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1100px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="" style="text-align: center">历史汇率</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="history_table" class="table table-striped"></table>
+                </div>
+##                 <div class="modal-footer" style="text-align: center">
+##                     <button type="button" class="btn btn-primary" id="sure_confirm">&emsp;确认&emsp;</button>
+##                     <button type="button" class="btn btn-primary" id="sure_cancel">&emsp;取消&emsp;</button>
+##                 </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</%block>

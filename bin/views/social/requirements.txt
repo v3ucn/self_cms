@@ -1,0 +1,5 @@
+
+redis==2.10.3
+honeycomb==0.2.2
+protobuf==2.6.1
+protobuf-to-dict==0.1.0

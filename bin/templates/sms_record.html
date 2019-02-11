@@ -1,0 +1,176 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">短信发送记录</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/main/css/sms_record.css?v=0.0.1">
+  <script type="text/javascript" src="/static/common/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="/static/common/js/laydate/laydate.js"></script>
+  <script type="text/javascript" src="/static/main/js/sms_record.js?v=0.0.2"></script>
+</%block>
+
+<%block name="page">
+  <form class="form-inline" id="form">
+    <div class="form-group">
+      <label for="phone">手机号</label>
+      <input type="text" class="form-control" id="phone">
+    </div>
+    <div class="form-group">
+      <label for="sms_type">类型</label>
+      <select id="sms_type" class="form-control">
+        <option value="">全部</option>
+        <option value="account alert">account alert</option>
+        <option value="auditcenter">auditcenter</option>
+        <option value="baojing">baojing</option>
+        <option value="bind">bind</option>
+        <option value="channel">channel</option>
+        <option value="check2 alert">check2 alert</option>
+        <option value="item_ordered">item_ordered</option>
+        <option value="kefu">kefu</option>
+        <option value="membercard">membercard</option>
+        <option value="mis">mis</option>
+        <option value="pay notice">pay notice</option>
+        <option value="pay_notify">pay_notify</option>
+        <option value="qiantai2">qiantai2</option>
+        <option value="receipt">receipt</option>
+        <option value="reset_pwd">reset_pwd</option>
+        <option value="signup">signup</option>
+        <option value="test">test</option>
+        <option value="test1">test1</option>
+        <option value="unknown">unknown</option>
+        <option value="verifycode">verifycode</option>
+        <option value="测试">测试</option>
+        <option value="短信营销">短信营销</option>
+        <option value="营销短信">营销短信</option>
+      </select>
+    </div>
+##     <div class="form-group">
+##       <label for="channel">通道</label>
+##       <select id="channel" class="form-control">
+##         <option value="">全部</option>
+##         <option value="1">成功</option>
+##         <option value="0">失败</option>
+##       </select>
+##     </div>
+    <div class="form-group">
+      <label for="month">请选择月份</label>
+      <input placeholder="请选择月份" id="month" class="layui-input form-control" readonly="readonly" size="10">
+      <label for="month"><i class="fa fa-calendar"></i></label>
+    </div>
+    <div class="form-group">
+      <input type="submit" class="form-control btn btn-success" value="查询"/>
+    </div>
+    <div class="form-group">
+      <input type="button" data-toggle='modal' data-target='#modal' class="form-control btn btn-primary" value="发送短信" />
+    </div>
+  </form>
+
+  <div class="result">
+    <table id="table" class="table display"></table>
+  </div>
+
+  <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="modalTitle" style="text-align: center">发送短信</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form">
+            <div class="form-group form-inline">
+              <label for="channelSend">选择通道：</label>
+              <select id="channelSend" class="form-control">
+                <option value="2">大汉短信云</option>
+                <option value="3">华森</option>
+                <option value="4">创美</option>
+              </select>
+              <span class="remain">当前剩余条数：<span id="remain">10000</span></span>
+            </div>
+            <div class="form-group form-inline">
+              <label for="typeSend">类型：</label>
+              <input type="radio" value="1" />手机号
+              <input type="radio" value="2" class="space-ahead" />用户ID
+
+##               <select id="typeSend" class="form-control">
+##                 <option value="1">有效</option>
+##                 <option value="0">无效</option>
+##               </select>
+            </div>
+            <div class="form-group form-inline">
+              <label for="userSend">发送对象：</label>
+              <textarea id="userSend" class="form-control" cols="70" rows="6"></textarea>
+              <label>
+                <input type="button" class="btn btn-primary" value="上传文件">
+                <a href="#">下载文件模板</a>
+              </label>
+            </div>
+            <div class="form-group form-inline">
+              <label for="contentSend">发送内容：</label>
+              <textarea id="contentSend" class="form-control" cols="70" rows="6"></textarea>
+              <input type="button" class="btn btn-primary" value="选择模板">
+            </div>
+            <div class="form-group form-inline">
+              <input type="checkbox" />定时发送
+              <label for="timing"><i class="fa fa-calendar"></i></label>
+              <input placeholder="选择时间" id="timing" class="layui-input form-control" readonly="readonly">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="text-align: center">
+          <button type="button" class="btn btn-primary" id="confirmNew">&emsp;确认发送&emsp;</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+  </div>
+
+##   <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+##     <div class="modal-dialog">
+##       <div class="modal-content">
+##         <div class="modal-header">
+##           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+##             <span aria-hidden="true">&times;</span>
+##           </button>
+##           <h4 class="modal-title" id="modalTitle" style="text-align: center">修改-审核黑名单</h4>
+##         </div>
+##         <div class="modal-body">
+##           <div class="form">
+##             <div class="form-group form-inline">
+##               <label for="typeEdit">ID：</label>
+##               <input type="text" id="idEdit" class="form-control" readonly>
+##             </div>
+##             <div class="form-group form-inline">
+##               <label for="typeEdit">类型：</label>
+##               <select id="typeEdit" class="form-control">
+##                 <option value="2">身份证号</option>
+##                 <option value="3">手机号</option>
+##                 <option value="4">银行卡号</option>
+##               </select>
+##             </div>
+##             <div class="form-group form-inline">
+##               <label for="stateEdit">状态：</label>
+##               <select id="stateEdit" class="form-control">
+##                 <option value="1">有效</option>
+##                 <option value="0">无效</option>
+##               </select>
+##             </div>
+##             <div class="form-group form-inline">
+##               <label for="valueEdit">值：</label>
+##               <textarea id="valueEdit" class="form-control"></textarea>
+##             </div>
+##           </div>
+##         </div>
+##         <div class="modal-footer" style="text-align: center">
+##           <button type="button" class="btn btn-primary" id="confirmEdit">&emsp;保存&emsp;</button>
+##           <button type="button" class="btn btn-default" data-dismiss="modal">&emsp;取消&emsp;</button>
+##         </div>
+##       </div><!-- /.modal-content -->
+##     </div><!-- /.modal -->
+##   </div>
+
+</%block>

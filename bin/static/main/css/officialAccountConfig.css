@@ -1,0 +1,35 @@
+/*button[data-id="status"]{*/
+    /*width: 100px;*/
+    /*!*height: 26px;*!*/
+    /*!*padding: 0px 5px;*!*/
+/*}*/
+/*button[data-id="province"]{*/
+    /*width: 40%;*/
+    /*!*height: 26px;*!*/
+    /*!*padding: 0px 5px;*!*/
+/*}*/
+/*#province{*/
+    /*width: 100px;*/
+/*}*/
+/*#city{*/
+    /*width: 100px;*/
+/*}*/
+/*button[data-id="city"]{*/
+    /*width: 40%;*/
+    /*!*height: 26px;*!*/
+    /*!*padding: 0px 5px;*!*/
+/*}*/
+#official_account_table td{
+    vertical-align: middle;
+}
+#modal_add label{
+    font-size: 14px;
+}
+
+#official_account_table label{
+    font-size: 13px;
+}
+
+tbody{
+    font-size: 13px;
+}

@@ -1,0 +1,456 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">交易信息</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <script src="/static/main/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="/static/common/js/toastr.js"></script>
+  <script type="text/javascript" src="/static/main/js/trade.js?v=0.0.2"></script>
+  <link rel="stylesheet" href="/static/main/css/trade.css?v=0.0.1">
+  <script type="text/javascript" src="/static/common/js/laydate/laydate.js"></script>
+  <link rel="stylesheet" href="/static/main/css/tradeCode.css">
+  <script type="text/javascript" src="/static/common/js/prefixfree.min.js"></script>
+
+    ##带搜索的下拉选择框
+  <link rel="stylesheet" href="/static/common/css/bootstrap-select.min.css">
+  <script src="/static/common/js/bootstrap-select.min.js"></script>
+  <script src="/static/common/js/i18n/defaults-zh_CN.min.js"></script>
+</%block>
+
+<%block name="page">
+<div class="trade-head">
+    <div class="col-md-4">
+        <div class="form-group form-inline">
+            <label for="uid">用户ID:</label>
+            <input type="text" class="form-control" id="uid">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group form-inline">
+            <label for="chnlid">通道:</label>
+##             <input type="text" class="form-control" id="chnlid">
+            <select name="" id="chnlid" class="selectpicker show-menu-arrow" data-live-search="true">
+                <option value="">全部</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group form-inline">
+            <label for="syssn" style="width: 30%">钱方流水号:</label>
+            <input type="text" style="width: 65%" class="form-control" id="syssn">
+        </div>
+    </div>
+
+    <div style="clear: both"></div>
+
+
+    <div class="col-md-4">
+        <div class="form-group form-inline">
+            <label for="groupid">渠道ID:</label>
+            <input type="text" class="form-control" id="groupid">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group form-inline">
+            <label for="chnluserid">通道商户号:</label>
+            <input type="text" class="form-control" id="chnluserid">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group form-inline">
+            <label for="">第三方订单号:</label>
+            <input type="text" class="form-control" id="chnlsn" >
+        </div>
+    </div>
+    <div style="clear: both"></div>
+    <div class="col-md-6 date-sel">
+        <div class="form-group form-inline">
+            <label for="">创建时间:</label>
+            <!--<input type='text' class="form-control" id='startdateI'/>-->
+            <input placeholder="请输入日期" id="startdate" class="laydate-icon1 layui-input" readonly="readonly" style="height: 34px">
+            <label for="startdate"><i class="fa fa-calendar"></i></label>
+            <!--<input placeholder="请输入日期" id="" class="laydate-icon1 layui-input" onClick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">-->
+            <!--<label class="glyphicon glyphicon-calendar" id="startdateL"></label>-->
+            至
+            <!--<input type='text' class="form-control" id='enddateI'/>-->
+            <input placeholder="请输入日期" id="enddate" class="laydate-icon2 layui-input" readonly="readonly" style="height: 34px">
+            <label for="enddate"><i class="fa fa-calendar"></i></label>
+            <!--<input placeholder="请输入日期" id="enddate" class="laydate-icon2 layui-input" onClick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">-->
+            <!--<label class="glyphicon glyphicon-calendar" id="enddateL"></label>-->
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group form-inline">
+            <button class='btn-date btn btn-default' id='today'>今日</button>
+            <button class='btn-date btn btn-default' id='yesterday'>昨日</button>
+            <button class='btn-date btn btn-default' id='seven'>最近7天</button>
+            <button class='btn-date btn btn-default' id='thirty'>最近30天</button>
+        </div>
+    </div>
+    <div class="col-md-1">
+        <button class='btn  btn-primary btn-info advanced'>高级搜索</button>
+    </div>
+
+    <div class="col-md-1">
+        <div class="form-group form-inline">
+            <button class='btn btn-primary btn-success' id="query">查询</button>
+##             <button class='btn btn-xs btn-primary btn-danger' id="export">导出</button>
+        </div>
+    </div>
+    <div style="clear: both"></div>
+
+    <div id="high-grade" hidden>
+        <div class="col-md-7">
+            <div class="form-group form-inline">
+                <label for="">金额范围</label>
+                <input type="text" class="form-control" id="starttxamt">
+                <label for="">-</label>
+                <input type="text" class="form-control" id="endtxamt">
+            </div>
+        </div>
+        <div style="clear: both"></div>
+        <div class="col-md-3">
+            <div class="form-group form-inline">
+                <label for="">币种</label>
+                <select class="" style="" id="txcurrcd">
+                    <option value="">不限</option>
+                    <option value="156">CNY</option>
+                    <option value="344">HKD</option>
+                    <option value="360">IDR</option>
+                    <option value="784">AED</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group form-inline">
+                <label for="">交易状态</label>
+                <select class="" id="status">
+                    <option value="">不限</option>
+                    <option value="0">交易中</option>
+                    <option value="1">交易成功</option>
+                    <option value="2">交易失败</option>
+                    <option value="3">交易超时</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group form-inline">
+                <label for="">支付类型</label>
+                <select class="" id="busicd">
+                    <option value="">不限</option>
+                    <option value="800201">微信扫码</option>
+                    <option value="800207">微信H5</option>
+                    <option value="800203">微信退款</option>
+                    <option value="800208">微信刷卡支付</option>
+                    <option value="800209">微信刷卡撤销(冲正)</option>
+                    <option value="800205">微信关闭订单</option>
+                    <option value="800101">支付宝扫码</option>
+                    <option value="800107">支付宝H5</option>
+                    <option value="800103">支付宝退款</option>
+                    <option value="800108">支付宝刷卡</option>
+                    <option value="800105">支付宝撤销(冲正)</option>
+                    <option value="800607">QQ钱包H5</option>
+                    <option value="800603">QQ钱包退款</option>
+                    <option value="700101">快捷支付-普通支付</option>
+                    <option value="700108">快捷支付-协议支付</option>
+                    <option value="700107">快捷支付-签约支付</option>
+                    <option value="700104">快捷支付-撤销</option>
+                    <option value="700105">快捷支付-退款</option>
+                    <option value="181000">订单支付</option>
+                    <option value="000000">刷卡消费</option>
+                    <option value="040000">消费冲正</option>
+                    <option value="201000">消费撤销</option>
+                    <option value="041000">消费撤销冲正</option>
+                    <option value="700000">储值消费</option>
+                    <option value="700002">储值退款</option>
+                    <option value="700003">储值反扫</option>
+                </select>
+            </div>
+        </div>
+        <div id="total" class="col-md-10">
+            <table border='1' align="center" style="width:100%;margin: 10px 0px;padding: 0 5px">
+                <tr>
+                    <th>支付成功笔数</th>
+                    <th>支付成功金额</th>
+                    <th>退款笔数</th>
+                    <th>退款金额</th>
+                    <th>交易净笔数</th>
+                    <th>交易净额</th>
+                </tr>
+                <tr>
+                    <td id="td_num">--</td>
+                    <td id="td_total">--</td>
+                    <td id="td_re_num">--</td>
+                    <td id="td_re_total">--</td>
+                    <td id="td_final_num">--</td>
+                    <td id="td_final_total">--</td>
+                </tr>
+            </table>
+        </div>
+##         <div id="high_wait" class="col-md-10" hidden>
+##             <figure class="fig">
+##                 <div class="dot white"></div>
+##                 <div class="dot"></div>
+##                 <div class="dot"></div>
+##                 <div class="dot"></div>
+##                 <div class="dot"></div>
+##              </figure>
+##         </div>
+        <div id="total_div" class="col-md-2">
+            <button class='btn btn-primary btn-danger' id="seetotal" style="display: block;margin-bottom: 10px">查看汇总</button>
+            <button class='btn btn-primary btn-danger' id="export" style="display: block">导出明细</button>
+        </div>
+##         <div class="col-md-4">
+##             <label>其他：</label>
+##
+##             <label class="checkbox-inline">
+##                 <input type="checkbox" id="inlineCheckbox1" value="option1"> 储值消费
+##             </label>
+##             <label class="checkbox-inline">
+##                 <input type="checkbox" id="inlineCheckbox2" value="option2"> 红包优惠
+##             </label>
+##
+##         </div>
+    </div>
+
+
+</div>
+
+
+<div>
+    <table id="tradeTable" class="table table-striped"></table>
+</div>
+<div class="modal fade" id="tradeDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel" style="text-align: center">订单详情</h4>
+            </div>
+            <div class="modal-body">
+                <div class="content">
+                    <!--用户-->
+                    <div class="user col-md-12">
+                        <div style="height: 25px;background-color: #2e6da4;text-align: center;line-height: 25px;color: #fff;margin-top: 10px;border-radius:5px">
+                            <lable>用户</lable>
+                        </div>
+                        <div>
+                            <div class="col-md-6">
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>用户ID：</label>
+                                    <label id="m_userid">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>收据名称：</label>
+                                    <label id="m_nick_name">XXXXXXXX</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>渠道ID：</label>
+                                    <label id="m_groupid">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>渠道类型：</label>
+                                    <label id="m_qudaoname">XXXXXXXX</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="clear: both"></div>
+                    <!--交易-->
+                    <div class="trade col-md-12">
+                        <div style="height: 25px;background-color: #2e6da4;text-align: center;line-height: 25px;color: #fff;margin-top: 10px;border-radius:5px">
+                            <lable>交易</lable>
+                        </div>
+                        <div>
+                            <div class="col-md-6">
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>钱方流水号：</label>
+                                    <label id="m_syssn">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>第三方订单号：</label>
+                                    <label id="m_out_trade_no">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>商户订单号：</label>
+                                    <label id="m_orderno">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>交易金额：</label>
+                                    <label id="m_txamt">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>币种：</label>
+                                    <label id="m_txcurrcd">XXXXXXXX</label>
+                                </div>
+##                                 <div class="form-group form-inline" style="text-align: left">
+##                                     <label>优惠方式：</label>
+##                                     <label>XXXXXXXX</label>
+##                                 </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>优惠金额：</label>
+                                    <label id="m_coupon_amt">XXXXXXXX</label>
+                                </div>
+##                                 <div class="form-group form-inline" style="text-align: left">
+##                                     <label>实收金额：</label>
+##                                     <label id="m_reality_amt">XXXXXXXX</label>
+##                                 </div>
+##                                 <div class="form-group form-inline" style="text-align: left">
+##                                     <label>退款金额：</label>
+##                                     <label id="m_refund">XXXXXXXX</label>
+##                                 </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>创建时间：</label>
+                                    <label id="m_txdtm">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>支付时间：</label>
+                                    <label id="m_paydtm">XXXXXXXX</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>交易状态：</label>
+                                    <label id="m_status">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>返回码：</label>
+                                    <label id="m_retcd">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>支付类型：</label>
+                                    <label id="m_busicd_name">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>支付类型代码：</label>
+                                    <label id="m_busicd">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>取消状态：</label>
+                                    <label id="m_cancel">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>原钱方流水号：</label>
+                                    <label id="m_origssn">XXXXXXXX</label>
+                                </div>
+##                                 <div class="form-group form-inline" style="text-align: left">
+##                                     <label>原第三方订单号：</label>
+##                                     <label>XXXXXXXX</label>
+##                                 </div>
+##                                 <div class="form-group form-inline" style="text-align: left">
+##                                     <label>原商户订单号：</label>
+##                                     <label id="m_origssn">XXXXXXXX</label>
+##                                 </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>银联参考号：</label>
+                                    <label id="m_chnlsn">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>是否输入密码：</label>
+                                    <label id="m_haspwd">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>是否有签名：</label>
+                                    <label id="m_sign">XXXXXXXX</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="clear: both"></div>
+                    <!--通道-->
+                    <div class="thoroughfare col-md-6">
+                        <div style="height: 25px;background-color: #2e6da4;text-align: center;line-height: 25px;color: #fff;margin-top: 10px;border-radius:5px">
+                            <lable>通道</lable>
+                        </div>
+                        <div>
+                            <div class="col-md-12">
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>支付通道：</label>
+                                    <label id="m_chnlid">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>通道商户号：</label>
+                                    <label id="m_chnluserid">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>通道终端号：</label>
+                                    <label id="m_chnltermid">XXXXXXXX</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--交易卡-->
+                    <div class="trade_card col-md-6">
+                        <div style="height: 25px;background-color: #2e6da4;text-align: center;line-height: 25px;color: #fff;margin-top: 10px;border-radius:5px">
+                            <lable>交易卡</lable>
+                        </div>
+                        <div>
+                            <div class="col-md-12">
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>卡类型：</label>
+                                    <label id="m_cardtp">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>卡号：</label>
+                                    <label id="m_cardcd">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>发行卡：</label>
+                                    <label id="m_issuerbank">XXXXXXXX</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="clear: both"></div>
+                    <!--客户端-->
+                    <div class="client col-md-6">
+                        <div style="height: 25px;background-color: #2e6da4;text-align: center;line-height: 25px;color: #fff;margin-top: 10px;border-radius:5px">
+                            <lable>客户端</lable>
+                        </div>
+                        <div>
+                            <div class="col-md-12">
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>手机系统：</label>
+                                    <label id="m_os">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>手机型号：</label>
+                                    <label id="m_phonemodel">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>客户端版本：</label>
+                                    <label id="m_appver">XXXXXXXX</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--终端-->
+                    <div class="terminal col-md-6">
+                        <div style="height: 25px;background-color: #2e6da4;text-align: center;line-height: 25px;color: #fff;margin-top: 10px;border-radius:5px">
+                            <lable>终端</lable>
+                        </div>
+                        <div>
+                            <div class="col-md-12">
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>终端号：</label>
+                                    <label id="m_terminalid">XXXXXXXX</label>
+                                </div>
+                                <div class="form-group form-inline" style="text-align: left">
+                                    <label>PSAMID：</label>
+                                    <label id="m_psamid">XXXXXXXX</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="clear: both"></div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</%block>

@@ -1,0 +1,49 @@
+#MerchantConfigTable label{
+    font-size: 14px;
+}
+#MerchantConfigTable th{
+    font-size: 13px;
+    padding: 0px;
+    text-align: center;
+    /*white-space: nowrap;*/
+}
+
+#MerchantConfigTable td{
+    padding: 0px;
+    text-align: center;
+    /*display: table-cell;*/
+    vertical-align: middle;
+    /*white-space: nowrap;*/
+}
+
+#history_detail th{
+    text-align: center;
+}
+#history_detail td{
+    text-align: center;
+}
+
+#change_modal label{
+    font-size: 14px;
+    height: 34px;
+    line-height: 34px;
+}
+
+.bootstrap-select button{
+    border: 1px solid gainsboro;
+}
+
+#MerchantConfigTable{
+    overflow-x: auto;
+}
+
+#table_div .dataTables_wrapper {
+  position: relative;
+  clear: both;
+  zoom: 1;
+  overflow-x: auto;
+}
+
+#table_div table{
+  width: 800px;
+}

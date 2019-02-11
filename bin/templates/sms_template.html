@@ -1,0 +1,137 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">短信模板</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/main/css/sms_template.css?v=0.0.1">
+  <script type="text/javascript" src="/static/common/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="/static/main/js/sms_template.js?v=0.0.1"></script>
+</%block>
+
+<%block name="page">
+  <form class="form-inline" id="form">
+    <div class="form-group">
+      <label for="name">模板名称</label>
+      <input type="text" class="form-control" id="name" placeholder="模糊查询">
+    </div>
+    <div class="form-group">
+      <label for="state">状态</label>
+      <select id="state" class="form-control">
+        <option value="">全部</option>
+        <option value="0">新建</option>
+        <option value="1">有效</option>
+        <option value="2">无效</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <input type="submit" class="form-control btn btn-success" value="查询"/>
+    </div>
+    <div class="form-group">
+      <input type="button" data-toggle='modal' data-target='#modal' class="form-control btn btn-primary" value="新增" />
+    </div>
+  </form>
+
+  <div class="result">
+    <table id="table" class="table display"></table>
+  </div>
+
+  <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="modalTitle" style="text-align: center">新增模板</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form">
+            <div class="form-group form-inline">
+              <label for="nameNew">模板名称：</label>
+              <input type="text" id="nameNew" class="form-control" placeholder="【部门】- 名称">
+            </div>
+            <div class="form-group form-inline">
+              <label for="contentNew">模板内容：</label>
+              <textarea id="contentNew" class="form-control" cols="50" rows="5"></textarea>
+            </div>
+            <div class="form-group form-inline">
+              <label for="stateNew">状态：</label>
+              <select id="stateNew" class="form-control">
+                <option value="0">新建</option>
+                <option value="1" selected>有效</option>
+                <option value="2">无效</option>
+              </select>
+            </div>
+            <div class="form-group form-inline">
+              <label for="typeNew">类型：</label>
+              <select id="typeNew" class="form-control">
+                <option value="1">人工创建</option>
+                <option value="2">系统内置</option>
+                <option value="3">客服专用</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer" style="text-align: center">
+          <button type="button" class="btn btn-primary" id="confirmNew">&emsp;保存&emsp;</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">&emsp;取消&emsp;</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+  </div>
+
+  <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="modalTitle" style="text-align: center">编辑模板</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form">
+            <div class="form-group form-inline">
+              <label for="typeEdit">ID：</label>
+              <input type="text" id="idEdit" class="form-control" readonly>
+            </div>
+            <div class="form-group form-inline">
+              <label for="nameEdit">模板名称：</label>
+              <input type="text" id="nameEdit" class="form-control" placeholder="【部门】- 名称">
+            </div>
+            <div class="form-group form-inline">
+              <label for="contentEdit">模板内容：</label>
+              <textarea id="contentEdit" class="form-control" cols="50" rows="5"></textarea>
+            </div>
+            <div class="form-group form-inline">
+              <label for="stateEdit">状态：</label>
+              <select id="stateEdit" class="form-control">
+                <option value="0">新建</option>
+                <option value="1">有效</option>
+                <option value="2">无效</option>
+              </select>
+            </div>
+            <div class="form-group form-inline">
+              <label for="typeEdit">类型：</label>
+              <select id="typeEdit" class="form-control">
+                <option value="1">人工创建</option>
+                <option value="2">系统内置</option>
+                <option value="3">客服专用</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer" style="text-align: center">
+          <button type="button" class="btn btn-primary" id="confirmEdit">&emsp;保存&emsp;</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">&emsp;取消&emsp;</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+  </div>
+
+</%block>

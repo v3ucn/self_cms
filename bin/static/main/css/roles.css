@@ -1,0 +1,57 @@
+.c-title{
+    width: 100%;
+    text-align: center;
+    height: 40px;
+
+}
+.c-search{
+    width: 100%;
+    text-align: center;
+
+}
+
+.left-checkgroup{
+    display: block;
+    width: 500px;
+
+}
+.left-check{
+    margin-left: 15px;
+    width: 220px;
+    display: inline-block;
+    text-align: left;
+}
+.right-check{
+    width: 220px;
+    /*height: 40px;*/
+    display: inline-block;
+    text-align: right;
+}
+
+.role-header{
+    border-bottom:1px solid lightgray;
+    padding-bottom:14px;
+    margin-bottom: 0px;
+}
+.left-title{
+    border-bottom:1px solid lightgray;
+    margin-bottom: 0px;
+    height: 40px;
+    line-height: 40px;
+}
+.right-title{
+    border-bottom:1px solid lightgray;
+    margin-bottom: 0px;
+    height: 40px;
+    line-height: 40px;
+}
+
+#roleGroup{
+    height:300px;
+    overflow:auto;
+}
+
+#roleGroupSel{
+    height:300px;
+    overflow:auto;
+}

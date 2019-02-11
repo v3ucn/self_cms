@@ -1,0 +1,18 @@
+
+/*#OfficialAccountManageTable label{*/
+    /*font-size: 14px;*/
+/*}*/
+#OfficialAccountManageTable th{
+    font-size: 14px;
+    /*padding: 0px;*/
+    text-align: center;
+}
+
+#OfficialAccountManageTable td{
+    /*padding: 0px;*/
+    text-align: center;
+    font-size: 13px;
+}
+#OfficialAccountManageTable td label{
+    font-size: 14px;
+}

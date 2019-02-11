@@ -1,0 +1,305 @@
+/*
+ *-----------------------------------------------------------------------------------
+ * === BASE CSS ===
+ *-----------------------------------------------------------------------------------
+ */
+
+/* === HTML ELEMENTS === */
+body {
+    background: #F5F5F5;
+    color: #222;
+    font-family: 'Dosis', arial;
+    line-height: 1;
+    padding-top: 50px;
+    padding-bottom: 40px;
+    text-rendering: optimizelegibility;
+    height: auto;
+    min-height: 100%;
+    width: 100%;
+}
+
+a:link,
+a:focus,
+a:visited,
+a:active,
+a:hover {
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: 'Dosis', arial;
+}
+
+small {
+    color: #000000 !important;
+}
+
+label {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+ul {
+    list-style: none;
+}
+
+p {
+    font-size: 16px;
+}
+
+textarea {
+    resize: none;
+}
+
+i {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+hr {
+    border-color: #999999;
+}
+
+main {
+    unicode-bidi: isolate;
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* === END HTML ELEMENTS === */
+
+/* === NAVBAR === */
+.navbar-default {
+    /*#444*/
+    background-color: #2F4056;
+    border-bottom: 0;
+    text-shadow: none;
+}
+
+.navbar-default ul.nav li.dropdown:hover > ul.dropdown-menu {
+    display: block;
+}
+
+.navbar-default .brand {
+    float: left;
+    width: 285px;
+}
+
+.navbar-default .navbar-brand span {
+    color: #FFF;
+    padding: 6px 10px;
+    margin-left: -4px;
+}
+
+.navbar-default i {
+    color: #FFFFFF;
+}
+
+.navbar-default .toogle {
+    cursor: pointer;
+    font-size: 16px;
+    height: 50px;
+    line-height: 20px;
+    padding: 15px;
+}
+
+/* === END NAVBAR === */
+
+/* === SIDEBAR === */
+.body {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    transition: margin-left 0.5s;
+    -o-transition: margin-left 0.5s;
+    -moz-transition: margin-left 0.5s;
+    -webkit-transition: margin-left 0.5s;
+}
+
+.body.slide {
+    margin-left: 200px;
+}
+
+.sidebar {
+    /*6595BC*/
+    background-color: #2F4056;
+    width: 200px;
+    height: 100%;
+    padding: 0px;
+    position: fixed;
+    left: -300px;
+    right: auto;
+    top: 50px;
+    z-index: 1;
+    transition: left 0.5s;
+    -o-transition: left 0.5s;
+    -moz-transition: left 0.5s;
+    -webkit-transition: left 0.5s;
+    overflow-y: hidden;
+}
+
+.sidebar.show {
+    left: 0;
+    display: block;
+}
+
+.ps-scrollbar-y-rail {
+    margin: 5px 0;
+}
+
+/* === END SIDEBAR === */
+
+/* === SIDEBAR MENU === */
+.panel {
+    border: 0;
+    box-shadow: none;
+}
+
+.panel-default > .panel-heading {
+    background-color: #2F4056;
+}
+
+.panel-default > .panel-heading:hover {
+    background-color: #2F4056;
+}
+
+.panel-default > .panel-heading a {
+    color: #FFF;
+    display: block;
+    padding: 8px 0px;
+}
+
+.list-group-item {
+    padding-left: 25px;
+    border: 0;
+    /*steelblue*/
+    background: #2F4056;
+
+    border-radius: 0 !important;
+}
+
+.list-group-item:hover {
+    /*#365167*/
+    background: #2F4056;
+    padding-left: 15px;
+    transition-delay: 0s;
+    transition-duration: 0.3s;
+    transition-property: all;
+    transition-timing-function: linear;
+}
+
+a.list-group-item {
+    color: #FFF;
+}
+
+a.list-group-item:hover {
+    /*background: #5881A2;*/
+    /*color: #FFF;*/
+    color: #286090;
+    background-color: #eeeeee;
+}
+
+a.list-group-item.solso-active {
+    /*#286090*/
+    background: #393D49;
+}
+
+.list-group-item.no-border {
+    border: 0;
+}
+
+.panel-group .panel + .panel {
+    margin-top: 0px;
+}
+
+/* === END SIDEBAR MENU === */
+
+/* === HELPER CLASSES === */
+.top10 {
+    margin-top: 10px;
+}
+
+.top20 {
+    margin-top: 20px !important;
+}
+
+.top40 {
+    margin-top: 40px;
+}
+
+.bottom20 {
+    margin-bottom: 20px;
+}
+
+.bottom40 {
+    margin-bottom: 40px;
+}
+
+.noMargin {
+    margin: 0;
+}
+
+.noPadding {
+    padding: 0;
+}
+
+.bg-white {
+    background: #FFFFFF !important;
+}
+
+.table .small {
+    width: 100px;
+}
+
+.table .xs-small {
+    width: 50px;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.lowercase {
+    text-transform: lowercase;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+/* === END HELPER CLASSES === */
+
+.breadcrumb {
+    border: 1px solid #DDD;
+}
+
+/* === FOOTER === */
+
+.footer {
+    border-top: solid 1px #aaaaaa;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    height: 40px;
+    width: 100%;
+    background-color: #F5F5F5;
+}
+
+.login {
+    height: 50px;
+    line-height: 20px;
+    color: white;
+    font-size: 16px;
+    padding: auto auto;
+    float: right;
+    padding: 15px;
+}
+.login em {
+    color: white;
+}
+.login a {
+    color: white;
+}

@@ -1,0 +1,169 @@
+label{
+    /*font-size: 14px;*/
+    /*font-weight: normal;*/
+}
+.top-2 label{
+    margin-right: 10px;
+}
+
+.senior label{
+    margin-right: 10px;
+}
+
+.top-3 label{
+    margin-right: 10px;
+}
+
+/*detail*/
+#audit_detail label{
+    font-weight: normal;
+    font-size: 14px;
+}
+
+#base_info form-group{
+    margin-bottom: 0px;
+}
+#base_info input{
+    border: 0px;
+}
+#store_info input{
+    border: 0px;
+}
+#account_info input{
+    border: 0px;
+}
+#rate_limit_info input{
+    border: 0px;
+}
+
+.head{
+    height: 26px;
+    background-color: #2e6da4;
+    text-align: center;
+    line-height: 25px;
+    color: #fff;
+    margin: 0px 0px;
+}
+
+#base_info{
+    padding: 0px 0px;
+}
+#store_info{
+    padding: 0px 0px;
+}
+#account_info{
+    padding: 0px 0px;
+}
+#rate_limit_info{
+    padding: 0px 0px;
+}
+/*#rate_limit_info form-inline la,#account_info form-inline,#store_info form-inline,#base_info form-inline{*/
+    /*vertical-align: middle;*/
+    /*line-height: 27px;*/
+/*}*/
+#audit_detail label,#audit_detail input,#audit_detail button{
+    margin: 0px 0px;
+}
+table{
+    border-right:1px solid gray;
+    border-bottom:1px solid gray;
+}
+table td{
+    border-bottom:1px solid gray;
+
+}
+table tr{
+    height: 27px;
+}
+
+#audit_photo li{
+    padding: 5px 5px;
+    border: 1px solid gray;
+    text-align: center;
+}
+
+.card_more{
+    float: right;
+    right: 5px;
+}
+.store_more{
+    float: right;
+    right: 5px;
+}
+.bank_more{
+    float: right;
+    right: 5px;
+}
+li{
+    list-style-type:none;
+}
+#audit_record label{
+    padding: 0px 0px;
+}
+#operation_div button{
+    margin-left: 100px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.photo_info_div{
+    /*display: table-cell;*/
+    vertical-align: bottom;
+    text-align: center;
+    height: 90px;
+    font-size: 13px;
+}
+
+.photo_info_sub{
+    width:100%;
+    position:absolute;
+    bottom: 5px;
+}
+.photo_info_div input{
+    border: 0px;
+}
+#salesman_memo{
+    width: 100%;
+    height: 24px;
+    padding: 0px 0px;
+    border: 0px;
+    resize: none;
+    outline: none;
+}
+#audit_memo{
+    width: 100%;
+    height: 154px;
+    padding: 0px 0px;
+    border: 0px;
+    resize: none;
+    outline: none;
+}
+
+.audit_sug_1{
+    width: 30%;
+    height: 28px;
+    display: inline;
+}
+.audit_sug_2{
+    width: 65%;
+    height: 28px;
+    display: inline;
+}
+button[data-id="select_mcc"]{
+    height: 26px;
+    padding: 0px 5px;
+}
+button[data-id="select_risk_level"]{
+    height: 26px;
+    padding: 0px 5px;
+}
+button[data-id="usertype"]{
+    height: 26px;
+    padding: 0px 5px;
+}
+
+#layui-laydate1 table{
+    border: 0px;
+}
+#layui-laydate1 table td{
+    border: 0px;
+}

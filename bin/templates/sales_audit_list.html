@@ -1,0 +1,239 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">签约宝审核</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <script src="/static/common/js/jquery.dataTables.js"></script>
+  <script src="/static/common/js/jQueryRotate.js"></script>
+  <link rel="stylesheet" href="/static/common/css/font-awesome.min.css">
+  <script src="/static/main/js/tools.js"></script>
+  <script src="/static/main/js/sales_audit_list.js?20180529"></script>
+  <link rel="stylesheet" href="/static/main/css/OfficialAccountsManage.css">
+
+  ##带搜索的下拉选择框
+  <link rel="stylesheet" href="/static/common/css/bootstrap-select.min.css">
+  <script src="/static/common/js/bootstrap-select.min.js"></script>
+  <script src="/static/common/js/i18n/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="/static/common/js/laydate/laydate.js"></script>
+</%block>
+
+<%block name="page">
+<div>
+    <div class="top1 form-inline">
+        <div class="form-group form-inline">
+            <!--placeholder="多个以逗号隔开"-->
+            <label for="">商户ID:</label>
+            <input  id="mchntid"  style="height: 34px;">
+        </div>
+
+        <div class="form-group form-inline">
+            <label for="">活动类型:</label>
+            <select id="type"  >
+
+                <option value="">全部</option>
+                <option value="1">微信绿洲</option>
+                <option value="2">支付宝蓝海</option>
+
+            </select>
+        </div>
+
+
+        <div class="form-group form-inline">
+            <label for="">审核状态:</label>
+            <select id="state"  >
+
+                <option value="">全部</option>
+                <option value="3">待审</option>
+                <option value="1">审核通过</option>
+                <option value="2">审核失败</option>
+
+            </select>
+        </div>
+
+
+         <div class="form-group form-inline">
+            <label for="">创建时间:</label>
+            <!--<select name="" id="time" class="selectpicker show-menu-arrow" style="width: 100px;">
+                <option value="30">最近30天</option>
+                <option value="7">最近一周</option>
+                <option value="14">最近两周</option>
+                <option value="21">最近三周</option>
+            </select>
+            -->
+             <input placeholder="请输入日期" id="startdate" class="laydate-icon1 layui-input" readonly="readonly" style="height: 34px;">
+            <label for="startdate"><i class="fa fa-calendar"></i></label>
+             <!--<input placeholder="请输入日期" id="" class="laydate-icon1 layui-input" onClick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">-->
+            <!--<label class="glyphicon glyphicon-calendar" id="startdateL"></label>-->
+            至
+            <!--<input type='text' class="form-control" id='enddateI'/>-->
+            <input placeholder="请输入日期" id="enddate" class="laydate-icon2 layui-input" readonly="readonly" style="height: 34px">
+            <label for="enddate"><i class="fa fa-calendar"></i></label>
+         </div>
+
+         <button class="btn btn-primary" id="query_sales" style="margin-left: 80px;margin-top:8px;">查询</button>
+
+        <button class="btn btn-primary" id="export_sales" style="margin-left: 80px;margin-top:8px;">导出EXCEL</button>
+
+
+        <button class="btn btn-primary" id="zip" style="margin-left: 80px;margin-top:8px;">导出图片</button>
+
+
+
+        <button class="btn btn-primary" id="audit_sales" style="margin-left: 80px;margin-top:8px;">批量审核</button>
+
+
+        <button class="btn btn-primary" id="audit_import" style="margin-left: 80px;margin-top:8px;">批量导入</button>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <table id="OfficialAccountManageTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>商户ID</th>
+                    <th>活动类型</th>
+                    <th>创建时间</th>
+                    <th>创建人</th>
+                    <th>审核状态</th>
+                    <th>备注</th>
+                    <th>审核人</th>
+                    <th>审核时间</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="modal_add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 700px;opacity: 1;background-color: #F5F5F5;" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel" style="text-align: center">签约宝审核</h4>
+            <label id="change_id" hidden></label>
+        </div>
+        <div class="modal-body">
+
+
+
+
+                <div class="form-inline">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                        <label style="height: 34px;line-height: 34px;"></label>
+                    </div>
+                    <div class="col-md-1" style="padding: 0px;">
+                        <label for="" style="height: 34px;line-height: 34px;">商户ID:</label>
+                    </div>
+                    <div class="form-inline col-md-8">
+                        <div>
+                           <textarea placeholder="多个用英文逗号分隔" name="" id="userid_group" cols="30" rows="8" style="width: 365px;height: 150px">
+
+                    </textarea>
+                        </div>
+                    </div>
+                </div>
+
+
+            <div class="form-inline">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                        <label style="height: 34px;line-height: 34px;"></label>
+                    </div>
+                    <div class="col-md-1" style="padding: 0px;">
+                        <label for="" style="height: 34px;line-height: 34px;">类型:</label>
+                    </div>
+                    <div class="form-inline col-md-8">
+                        <div>
+                            <select id="stype" >
+                                <option value='1'>微信绿洲</option>
+                                <option value='2'>支付宝蓝海</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+             <div style="clear: both"></div>
+
+            <div class="form-inline">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                        <label style="height: 34px;line-height: 34px;"></label>
+                    </div>
+                    <div class="col-md-1" style="padding: 0px;">
+                        <label for="" style="height: 34px;line-height: 34px;">备注:</label>
+                    </div>
+                    <div class="form-inline col-md-8">
+                        <div>
+                           <input type = 'text' class="form-control" id="memo" style="width:365px;"  />
+                        </div>
+                    </div>
+                </div>
+
+
+
+            <div style="clear: both"></div>
+
+            <div class="form-inline">
+                <div class="col-md-2 col-md-offset-4">
+                    <button class="btn btn-primary" onclick="doaudit('1')">审核通过</button>
+                </div>
+                <div class="col-md-2 " style="margin-left: 150px;">
+                    <button class="btn btn-primary" onclick="doaudit('2')">审核失败</button>
+                </div>
+            </div>
+
+            <div style="clear: both"></div>
+        </div>
+    </div>
+</div>
+
+
+
+    <div class="modal fade" id="modal_add_dao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 700px;opacity: 1;background-color: #F5F5F5;" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel" style="text-align: center">导入excel</h4>
+            <label id="change_id" hidden></label>
+        </div>
+        <div class="modal-body">
+
+
+
+
+                <div class="form-inline">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                        <label style="height: 34px;line-height: 34px;"></label>
+                    </div>
+                    <div class="col-md-1" style="padding: 0px;">
+                        <label for="" style="height: 34px;line-height: 34px;">上传文件:</label>
+                    </div>
+                    <div class="form-inline col-md-8">
+                        <div>
+                           <input type="file" name="file" id="file_upload">
+                        </div>
+                    </div>
+                </div>
+
+
+            <div style="clear: both"></div>
+
+            <div class="form-inline">
+                <div class="col-md-2 col-md-offset-4">
+                    <button class="btn btn-primary" onclick="FileUpload()">确认</button>
+                </div>
+
+            </div>
+
+            <div style="clear: both"></div>
+        </div>
+    </div>
+</div>
+
+
+</%block>

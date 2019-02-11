@@ -1,0 +1,827 @@
+# coding: utf-8
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>入网审核详情</title>
+    <link rel="shortcut icon" href="/static/common/img/favicon.ico">
+    <link rel="stylesheet" href="/static/common/css/bootstrap-3.3.7.min.css">
+    <link rel="stylesheet" href="/static/common/css/font-awesome-4.7.0.min.css">
+    <script type="text/javascript" src="/static/common/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="/static/common/js/bootstrap-3.3.7.min.js"></script>
+    <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+    <script src="/static/common/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" href="/static/common/css/toastr.css">
+    <script src="/static/common/js/toastr.js"></script>
+    ##查看大图
+    <link rel="stylesheet" href="/static/common/css/viewer.min.css">
+    <script src="/static/common/js/viewer.min.js"></script>
+    ##图片旋转
+    <script src="/static/common/js/jQueryRotate.js"></script>
+    ##小图标的
+    <link rel="stylesheet" href="/static/common/css/font-awesome.min.css">
+    ##带搜索的下拉选择框
+    <link rel="stylesheet" type="text/css" href="/static/common/css/bootstrap-select.min.css">
+    <script src="/static/common/js/bootstrap-select.min.js"></script>
+    <script src="/static/common/js/i18n/defaults-*.min.js"></script>
+    ##跟随定位
+    <script src="/static/common/js/easydialog.min.js"></script>
+    ##日期插件
+    <script type="text/javascript" src="/static/common/js/laydate/laydate.js"></script>
+
+    <link rel="stylesheet" href="/static/main/css/register_audit.css">
+    <script src="/static/main/js/register_audit_detail.js"></script>
+</head>
+<body>
+##     模态框
+    <div class="modal fade" id="more_user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1100px;opacity: 1;background-color: white;" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel" style="text-align: center">XXX</h4>
+            </div>
+            <div class="modal-body">
+                <table id="moreRelationTable" class="table table-striped" style="border: 0px"></table>
+            </div>
+        </div>
+    </div>
+    <div style="height: 30px;width: 100%;text-align: center;line-height: 30px">用户ID：<label id="title_userid">${data.get('userid')}</label><label id="audit_id" hidden>${data.get('aid')}</label></div>
+    <div id="audit_detail">
+        <div id='base_info' class="col-md-3">
+            <table class="col-md-12">
+                <tr>
+                    <td>
+                        <div class="head">
+                            <lable>基本信息</lable>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">商户类型：</label>
+##                             <label id="usertype">XXXXX</label>
+                            <select name="" id="usertype" class="selectpicker show-menu-arrow">
+                                <option value="1">小微</option>
+                                <option value="2">个体工商户</option>
+                                <option value="3">企业</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">审核状态：</label>
+                            <label id="manual_status">XXXXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">申请时间：</label>
+                            <label id="ctime">XXXXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">审核时间：</label>
+                            <label id="utime">XXXXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">签约实体：</label>
+                            <input id="name" class="photo_name" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label style="width: 30%">营业执照号：</label>
+                            <input id="licensenumber" type="text" style="width: 65%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">法人代表：</label>
+                            <input id="legalperson" class="photo_legalperson" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">法人身份证号：</label>
+                            <input id="idnumber" class="photo_idnumber" type="text">
+                            <button class="btn btn-xs btn-primary card_more"><span class="glyphicon icon-external-link" aria-hidden="true">更多</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">身份证有效期：</label>
+##                             <input id="idnumbertime" type="text">
+                            <input placeholder="请输入日期" id="startdate" class="startdate" readonly="readonly" style="width: 90px">
+                            至
+                            <input placeholder="请输入日期" id="enddate" class="enddate" readonly="readonly" style="width: 90px">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">是否失信被执行人：</label>
+                            <input id="dishonestyinfo" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                         <div class="form-inline" style="text-align: left">
+                            <label for="">被授权人身份证号：</label>
+                            <input type="text" class="" id="">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="store_info" class="col-md-3">
+            <table class="col-md-12">
+                <tr>
+                    <td>
+                        <div class="head">
+                            <lable>店铺信息</lable>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">用户来源：</label>
+                            <label id="src">XXXXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="unit">门店类型：</label>
+                            <label id="shop_type">XXXXX</label>
+                            <button class="btn btn-xs btn-primary store_more"><span class="glyphicon icon-external-link" aria-hidden="true">查看关联店铺</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="unit">其他身份：</label>
+                            <label id="otherid">XXXXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="unit">手机号：</label>
+                            <input id="mobile" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="unit">收据名称：</label>
+                            <input id="nickname" class="photo_nickname" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">MCC：</label>
+                            <select name="" id="select_mcc" class="selectpicker show-menu-arrow" data-live-search="true">
+                                <option value="">1</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">经营所属省份：</label>
+                            <input id="shop_province" type="text" style="width: 60px">
+                            <label for="">城市：</label>
+                            <input id="shop_city" type="text" style="width: 60px">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label style="width: 25%;">经营地址：</label>
+                            <input id="shop_address" type="text" style="width: 70%;">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">固定联系电话：</label>
+                            <input id="telephone" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">EMAIL：</label>
+                            <input id="email" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="account_info" class="col-md-3">
+            <table class="col-md-12">
+                <tr>
+                    <td>
+                        <div class="head">
+                            <lable>收款账户信息</lable>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">清算银行类型：</label>
+##                             <input id="banktype" type="text" style="width: 30px">
+                            <select name="" id="banktype" style="width: 60px">
+                                <option value="1">对私</option>
+                                <option value="2">对公</option>
+                            </select>
+                            <label for="">账户名称：</label>
+                            <input id="bankuser" class="photo_bankuser" type="text" style="width: 70px">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">开户行省份：</label>
+                            <input id="account_province" type="text" style="width: 70px">
+                            <label for="">城市：</label>
+                            <input id="account_city" type="text" style="width: 90px">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">开户银行：</label>
+                            <input id="headbankname" class="photo_headbankname" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="" class="col-md-3" style="padding: 0px">银行账号：</label>
+                            <input id="bankaccount" class="photo_bankaccount col-md-7" type="text" style="padding: 0px">
+                            <button class="btn btn-xs btn-primary bank_more col-md-2"><span class="glyphicon icon-external-link" aria-hidden="true">更多</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">开户支行：</label>
+                            <input id="bankname" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">开户网点联行号：</label>
+                            <input id="bankcode" type="text">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">银行预留手机号：</label>
+                            <input type="text" class="" id="">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="head">
+                            <lable>渠道信息</lable>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">渠道类型：</label>
+                            <label id="channel_type">XXXXX</label>
+                            <label for="">业务员姓名：</label>
+                            <label id="salesmanname">XXXXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">渠道名称：</label>
+                            <label id="channel_name">XXXXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">渠道授权区域：</label>
+                            <label id="channel_area">XXXXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">备注：</label>
+                            <label id="memo">XXXXX</label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="rate_limit_info" class="col-md-3">
+            <table class="col-md-12">
+                <tr>
+                    <td>
+                        <div class="head">
+                            <lable>费率／限额／风控等级</lable>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label>用户风控等级：</label>
+                            <select name="" id="select_risk_level" class="selectpicker show-menu-arrow" data-live-search="true">
+                                <option value="">1</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left;font-size: 13px">
+                            <label for="">借记卡费率：</label>
+                            <label id="fee_ratio">XXX</label>
+                            <label for="">封顶：</label>
+                            <label>-1</label>
+                            <label for="">单比上限：</label>
+                            <label>XXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">信用卡费率：</label>
+                            <label id="credit_ratio">XXX</label>
+                            <label for="">封顶：</label>
+                            <label>-1</label>
+                            <label for="">单比上限：</label>
+                            <label>XXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">微信费率：</label>
+                            <label id="tenpay_ratio">XXX</label>
+                            <label for="">封顶：</label>
+                            <label>-1</label>
+                            <label for="">单比上限：</label>
+                            <label>XXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">支付宝费率：</label>
+                            <label id="alipay_ratio">XXX</label>
+                            <label for="">封顶：</label>
+                            <label>-1</label>
+                            <label for="">单比上限：</label>
+                            <label>XXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">QQ费率：</label>
+                            <label id="qqpay_ratio">XXX</label>
+                            <label for="">封顶：</label>
+                            <label>-1</label>
+                            <label for="">单比上限：</label>
+                            <label>XXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                            <label for="">京东费率：</label>
+                            <label id="jdpay_ratio">XXX</label>
+                            <label for="">封顶：</label>
+                            <label>-1</label>
+                            <label for="">单比上限：</label>
+                            <label>XXX</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="head">
+                            <lable>用户标签</lable>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                             <label><input class="tag_type" name="tag" type="checkbox" value="1"/>有照(法人同申请人)</label>
+                             <label><input class="tag_type" name="tag" type="checkbox" value="2"/>法人身份证(有授权)</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                             <label><input class="tag_type" name="tag" type="checkbox" value="3"/>有照(法人同申请人)</label>
+                             <label><input class="tag_type" name="tag" type="checkbox" value="4"/>汇宜T0</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                             <label><input class="tag_type" name="tag" type="checkbox" value="5"/>关系证明</label>
+                             <label><input class="tag_type" name="tag" type="checkbox" value="6"/>非人工审</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-inline" style="text-align: left">
+                             <label><input class="tag_type" name="tag" type="checkbox" value="7"/>连锁店关系证明</label>
+                             <label><input class="tag_type" name="tag" type="checkbox" value="8"/>开户许可证</label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        ##图片部分弹出的跟随定位框
+        <div id="nopass_memo_div" class="form-inline" style="display:none;width:300px;height:30px;background-color: white;border-radius:5px">
+            <select class="form-control audit_sug_photo" id="" style="position:absolute;top:0px;bottom:0px;height: 30px;width: 270px">
+            </select>
+            <button class="photomemo_close_btn" style="border:0px;position: absolute;right:0px;left:275px;top:0px;bottom:0px;padding: 0px 0px;"><i class="fa fa-close fa-2x"></i></button>
+        </div>
+
+        <ul id="audit_photo" style="padding: 0px 0px;margin: 0px 0px">
+            <li class="col-md-3">
+                <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+                <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+                <label class="col-md-6">身份证正面</label>
+                <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+                <button id="idcardfront" class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+                <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+                <img id="p_idcardfront" data-angle="0" style="width: 100%" src="" alt="" onerror="this.src='/static/common/img/default.jpg'">
+                <div class="photo_info_div">
+                    <div class="photo_info_sub">
+                        <div class="form-inline" style="text-align: center">
+                            <label for="">签约实体：</label>
+                            <input type="text" class="photo_name" id="" value="XXXXXXX">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">法人代表：</label>
+                            <input type="text" class="photo_legalperson" id="" value="XXXXXXX">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">身份证号：</label>
+                            <input type="text" class="photo_idnumber" id="" value="XXXXXXX">
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="col-md-3">
+                <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+                <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+                <label class="col-md-6">身份证背面</label>
+                <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+                <button id="idcardback" class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+                <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+                <img id="p_idcardback" data-angle="0" style="width: 100%" src="" alt="" onerror="this.src='/static/common/img/default.jpg'">
+                <div class="photo_info_div">
+                    <div class="photo_info_sub">
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">身份证有效期：</label>
+##                             <input type="text" class="photo_idnumbertime" id="" value="XXXXXXX">
+                            <input placeholder="请输入日期" id="" class="laydate-icon1 layui-input startdate" readonly="readonly" style="width: 90px">
+                            至
+                            <input placeholder="请输入日期" id="" class="laydate-icon2 layui-input enddate" readonly="readonly" style="width: 90px">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="col-md-3">
+                <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+                <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+                <label class="col-md-6">手持身份证合照</label>
+                <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+                <button id="idcardinhand" class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+                <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+                <img id="p_idcardinhand" data-angle="0" style="width: 100%" src="" alt="" onerror="this.src='/static/common/img/default.jpg'">
+                <div class="photo_info_div">
+                    <div class="photo_info_sub">
+
+                    </div>
+                </div>
+            </li>
+            <li class="col-md-3">
+                <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+                <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+                <label class="col-md-6">店铺外景照片</label>
+                <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+                <button id="shopphoto" class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+                <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+                <img id="p_shopphoto" data-angle="0" style="width: 100%" src="" alt="" onerror="this.src='/static/common/img/default.jpg'">
+                <div class="photo_info_div">
+                    <div class="photo_info_sub">
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">收据名称：</label>
+                            <input type="text" class="photo_nickname" id="" value="XXXXXXX">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">MCC：</label>
+##                             <input type="text" class="photo_mcc" id="" value="XXXXXXX">
+                            <input class="photo_mcc" value="XXXXXXX" disabled="disabled">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="col-md-3">
+                <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+                <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+                <label class="col-md-6">营业执照</label>
+                <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+                <button id="licensephoto" class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+                <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+                <img id="p_licensephoto" data-angle="0" style="width: 100%" src="" alt="" onerror="this.src='/static/common/img/default.jpg'">
+                <div class="photo_info_div">
+                    <div class="photo_info_sub">
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">商户类型：</label>
+                            <input type="text" class="photo_usertype" id="" value="XXXXXXX" readonly="readonly">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">签约实体：</label>
+                            <input type="text" class="photo_name" id="" value="XXXXXXX">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">法人代表：</label>
+                            <input type="text" class="photo_legalperson" id="" value="XXXXXXX">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">银行账户名称：</label>
+                            <input type="text" class="photo_bankuser" id="" value="XXXXXXX">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="col-md-3">
+               <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+                <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+                <label class="col-md-6">手写签名照</label>
+                <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+                <button id="signphoto" class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+                <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+                <img id="p_signphoto" data-angle="0" style="width: 100%" src="" alt="" onerror="this.src='/static/common/img/default.jpg'">
+                <div class="photo_info_div">
+                    <div class="photo_info_sub">
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">商户类型：</label>
+                            <input type="text" class="photo_usertype" id="" value="XXXXXXX" readonly="readonly">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">签约实体：</label>
+                            <input type="text" class="photo_name" id="" value="XXXXXXX">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">法人代表：</label>
+                            <input type="text" class="photo_legalperson" id="" value="XXXXXXX">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">银行账户名称：</label>
+                            <input type="text" class="photo_bankuser" id="" value="XXXXXXX">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="col-md-3">
+                <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+                <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+                <label class="col-md-6">银行卡正面</label>
+                <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+                <button id="authbankcardfront" class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+                <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+                <img id="p_authbankcardfront" data-angle="0" style="width: 100%" src="" alt="" onerror="this.src='/static/common/img/default.jpg'">
+                <div class="photo_info_div">
+                    <div class="photo_info_sub">
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">开户银行：</label>
+                            <input type="text" class="photo_headbankname" id="" value="XXXXXXX">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="unit">银行账号：</label>
+                            <input type="text" class="photo_bankaccount" id="" value="XXXXXXX">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="col-md-3">
+              <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+                <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+                <label class="col-md-6">店铺内景照片</label>
+                <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+                <button id="goodsphoto" class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+                <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+                <img id="p_goodsphoto" data-angle="0" style="width: 100%" src="" alt="" onerror="this.src='/static/common/img/default.jpg'">
+                <div class="photo_info_div">
+                    <div class="photo_info_sub">
+                        <div class="form-inline" style="text-align: center">
+                            <label for="">收据名称：</label>
+                            <input type="text" class="photo_nickname" id="" value="XXXXXXX">
+                        </div>
+                        <div class="form-inline" style="text-align: center">
+                            <label for="">MCC：</label>
+##                             <input type="text" class="photo_mcc" id="" value="XXXXXXX">
+                            <input class="photo_mcc" value="XXXXXXX" disabled="disabled">
+                        </div>
+                    </div>
+                </div>
+            </li>
+##             <li class="col-md-3">
+##                <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+##                 <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+##                 <label class="col-md-6">XXXXXXX</label>
+##                 <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+##                 <button id="" class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+##                 <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+##                 <img data-angle="0" style="width: 100%" src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1514375330&di=318bea5de11e2b0b7e65ff7194bc6452&src=http://upload.ct.youth.cn/2015/1021/1445414596335.jpg" alt="">
+##             </li>
+##             <li class="col-md-3">
+##                <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+##                 <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+##                 <label class="col-md-6">XXXXXXX</label>
+##                 <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+##                 <button class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+##                 <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+##                 <img data-angle="0" style="width: 100%" src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="">
+##             </li>
+##             <li class="col-md-3">
+##                 <button class="btn btn-xs col-md-1 rotation_left"><span class="fa fa-rotate-left fa-lg" aria-hidden="true"></span></button>
+##                 <button class="btn btn-xs col-md-1 rotation_right"><span class="fa fa-rotate-right fa-lg" aria-hidden="true"></span></button>
+##                 <label class="col-md-6">XXXXXXX</label>
+##                 <button class="btn btn-xs col-md-1"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></button>
+##                 <button class="btn btn-xs col-md-1 no_pass_btn"><i class="fa fa-times-rectangle-o fa-lg" aria-hidden="true"></i></button>
+##                 <button class="btn btn-xs col-md-2"><i class="glyphicon icon-tags icon-large" aria-hidden="true"></i></button>
+##                 <img data-angle="0" style="width: 100%" src="http://img5.imgtn.bdimg.com/it/u=2006592942,2480446407&fm=200&gp=0.jpg" alt="">
+##             </li>
+
+
+        </ul>
+        <div style="clear: both"></div>
+        <div>
+            <div class="col-md-7" style="padding: 0px 0px;">
+                <table border="1" style="width: 100%;border-bottom: 0px">
+                    <tr style="height: 30px">
+                        <td width="20%">业务员备注</td>
+                        <td width="80%">
+                            <textarea name="" id="salesman_memo" readonly>无</textarea>
+                        </td>
+                    </tr>
+                    <tr style="height: 125px">
+                        <td width="20%">通道进件结果</td>
+                        <td width="60%">
+                            <div class="col-md-10">
+                                <ul id="merchant_result" style="padding: 0px 10px 0px 0px">
+##                                     <li><label> </label></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-2" style="text-align: center;margin-top: 50px;">
+                                <button id="chnl_memo" class="btn btn-info"><i class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i>备注</button>
+                            </div>
+                        </td>
+                    </tr>
+                    ##通道进件结果部分弹出的跟随定位框
+                    <div id="chnl_memo_div" class="form-inline" style="display:none;width:300px;height:30px;background-color: white;border-radius:5px">
+                        <select class="form-control chnl_memo_select" style="position:absolute;top:0px;bottom:0px;height: 30px;width: 270px">
+                        </select>
+                        <button class="chnl_memo_close_btn" style="border:0px;position: absolute;right:0px;left:275px;top:0px;bottom:0px;padding: 0px 0px;"><i class="fa fa-close fa-2x"></i></button>
+                    </div>
+                    <tr style="height: 30px;">
+                        <td width="20%">审核意见</td>
+                        <td width="80%">
+                            <select class="form-control audit_sug_1" id="">
+##
+                            </select>
+
+                            <select class="form-control audit_sug_2" id="">
+##
+                            </select>
+                        </td>
+                    </tr>
+                    <tr style="height: 160px">
+                        <td width="20%">审核备注</td>
+                        <td width="80%" style="height: 158px">
+                            <textarea name="" id="audit_memo"></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-5" style="padding: 0px 0px;">
+                <div class="head">
+                    <lable>审核记录</lable>
+                </div>
+                <div style="overflow:auto;height: 320px;">
+                    <ul id="audit_record" style="padding: 0px 0px;margin: 0px 0px;">
+                        <li style="border: 1px solid gray;">
+                            <div id="audit_record" class="form-inline" style="text-align: left;width: 100%">
+                                <label class="col-md-2">操作员:</label>
+                                <label class="col-md-2">XXXXX</label>
+                                <label class="col-md-1">结果:</label>
+                                <label class="col-md-2">XXXXX</label>
+                                <label class="col-md-1">时间:</label>
+                                <label class="col-md-4">XXXXX</label>
+                            </div>
+                            <div>
+                                <label for="">
+                                    1.黄色填充区域：信息不可编辑
+                                    2.商户类型：下拉列表，含：小微、个体工商户、企业
+                                    3.MCC、风控等级：下拉可筛选列表，输入关键字可筛选关联选项，只可选择列表内信息，不可保存手动输入内容
+                                    4.身份证号：展示出同一身份证号注册店铺数量，点击“更多”查看关联明细（如下图）点击用户ID可查看该用户审核明细
+                                </label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div style="clear: both"></div>
+        <div id="operation_div" style="border-top: 1px solid gray">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <button id="success_btn" class="btn btn-success btn-lg">通过</button>
+                <button id="fail_btn" class="btn btn-danger btn-lg">失败</button>
+                <button id="refuse_btn" class="btn btn-warning btn-lg">拒绝</button>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+</body>
+</html>

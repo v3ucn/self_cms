@@ -1,0 +1,84 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">收支记录</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/main/css/fund.css">
+  <script type="text/javascript" src="/static/common/js/laydate/laydate.js"></script>
+  <script type="text/javascript" src="/static/common/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="/static/main/js/fund.js?v=0.0.1"></script>
+</%block>
+
+<%block name="page">
+<form class="form-inline" id="form">
+  <div class="form-group">
+    <label for="uid">用户ID/手机号</label>
+    <input type="text" class="form-control" id="uid">
+  </div>
+  <div>
+    <table id="balanceTable" class="table table-striped table-bordered">
+      <tr>
+        <th>账户名称</th>
+        <th>金额（元）</th>
+        <th>冻结金额</th>
+      </tr>
+      <tr>
+        <td>----</td>
+        <td>--</td>
+        <td>--</td>
+      </tr>
+    </table>
+  </div>
+  <div class="form-group">
+    <input placeholder="请输入日期" id="start_date" class="layui-input form-control" readonly="readonly" size="10">
+    <label for="start_date"><i class="fa fa-calendar"></i></label>&nbsp;&nbsp;
+    至
+    <input placeholder="请输入日期" id="end_date" class="layui-input form-control" readonly="readonly" size="10">
+    <label for="end_date"><i class="fa fa-calendar"></i></label>
+  </div>
+  <div class="form-group">
+    <label for="account_type">账户名称</label>
+    <select id="account_type" class="form-control">
+      <option value="">全部现金账户</option>
+      <option value="2000">现金账户-钱方</option>
+      <option value="2001">现金账户-汇宜</option>
+      <option value="2002">现金账户-汇宜无卡</option>
+      <option value="2003">现金账户-中信</option>
+      <option value="2004">现金账户-富友</option>
+      <option value="2005">现金账户-中信围餐</option>
+      <option value="2006">现金账户-汇宜无卡快捷</option>
+      <option value="2007">现金账户-中信补贴</option>
+      <option value="2008">现金账户-汇宜T0</option>
+      <option value="2009">现金账户-网商</option>
+      <option value="2010">现金账户-微信海外</option>
+      <option value="2011">现金账户-微信直连CNY</option>
+      <option value="2012">现金账户-微信直连HDK</option>
+      <option value="2014">现金账户-支付宝海外迪拜AED</option>
+      <option value="2015">现金账户-支付宝海外柬埔塞USD</option>
+      <option value="2016">现金账户-微信小微</option>
+      <option value="2017">现金账户-合利宝</option>
+      <option value="2018">现金账户-网商蓝海</option>
+      <option value="2100">现金账户-代付</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="action_type">余额详情</label>
+    <select id="action_type" class="form-control">
+      <option value="">全部</option>
+      <option value="3" selected>出款</option>
+      <option value="4">退票</option>
+      <option value="6">扣款</option>
+      <option value="2">结算</option>
+      <option value="7">冻结</option>
+    </select>
+  </div>
+  <input type="submit" class="form-control btn btn-success" value="查询"/>
+</form>
+
+<div class="result">
+  <table id="fundTable" class="table display"></table>
+</div>
+</%block>

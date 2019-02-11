@@ -1,0 +1,162 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">标签管理</%block>
+
+<%block name="addition_header">
+  <script type="text/javascript" src="/static/common/js/laydate/laydate.js"></script>
+  <script type="text/javascript" src="/static/common/js/jquery.dataTables.js"></script>
+  <script src="/static/common/js/bootstrap-select.min.js"></script>
+  <script src="/static/common/js/i18n/defaults-zh_CN.min.js"></script>
+  <link rel="stylesheet" href="/static/common/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="/static/common/css/style.css">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/common/css/dataTables.bootstrap.css">
+  <link rel="stylesheet" href="/static/main/css/tag.css">
+  <script type="text/javascript" src="/static/main/js/tag.js"></script>
+</%block>
+
+<%block name="page">
+<div>
+    <div class="top1 form-inline">
+        <div class="form-inline form-group">
+            <label for="">标签名称:</label>
+            <select id="query_cate_name" name="" class="selectpicker show-menu-arrow" data-live-search="true" data-title="请选择">
+                <option value="">全部</option>
+            </select>
+        </div>
+        <div class="form-inline form-group">
+            <label for="">标签解释:</label>
+            <input type="text" id="query_remark" class="form-control" placeholder=" ">
+        </div>
+        <div class="form-inline form-group">
+            <label for="">状态:</label>
+            <select id="query_status" name="" class="selectpicker show-menu-arrow" data-live-search="true">
+                <option value="">全部</option>
+                <option value="1">有效</option>
+                <option value="0">无效</option>
+            </select>
+        </div>
+    </div>
+    <div class="top2 form-inline">
+        <div class="form-inline form-group m-l-lg m-t">
+            <button class="btn btn-primary form-inline" id="query_submit">查询</button>
+            <button class="btn btn-primary form-inline" id="add_submit">新增</button>
+            <button class="btn btn-danger form-inline m-l-lg" id="expo_submit">导出</button>
+        </div>
+    </div>
+    <div class="m-t-lg">
+        <table id="tag_table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>标签名称</th>
+                    <th>标签解释</th>
+                    <th>商户数量</th>
+                    <th>创建时间</th>
+                    <th>更新时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody class="operation">
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="edit_modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog"style="width: 700px;opacity: 1;background-color: #F5F5F5;">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal">&nbsp;&nbsp;<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <!--title-->
+                <h4 class="modal_title">
+                    编辑标签
+                </h4>
+                <!--title-->
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" style="padding: 0 80px 0 90px">
+                    <div class="form-group">
+                        <div class="col-md-6" style="display:none">
+                            <label id="cate_code" style="display:none"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label-left col-md-4">标签名称:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="edit_cate_name" class="form-control" placeholder=" ">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label-left col-md-4">标签解释:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="edit_remark" class="form-control" placeholder=" ">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">状态:</label>
+                        <div class="col-md-6">
+                            <select id="edit_status" name="" class="selectpicker show-menu-arrow">
+                                <option value="1">有效</option>
+                                <option value="0">无效</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border:none;">
+                <div class="col-md-8">
+                    <button class="btn btn-primary form-inline" id="modal_submit">提&nbsp;&nbsp;&nbsp;&nbsp;交</button>
+                    <button class="btn btn-primary form-inline" onclick="$('#edit_modal').modal('hide');" style="margin-left: 30px">取&nbsp;&nbsp;&nbsp;&nbsp;消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="add_modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog"style="width: 700px;opacity: 1;background-color: #F5F5F5;">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal">&nbsp;&nbsp;<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <!--title-->
+                <h4 class="modal_title">
+                    新增标签
+                </h4>
+                <!--title-->
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" style="padding: 0 80px 0 90px">
+                    <div class="form-group">
+                        <label class="control-label-left col-md-4">标签名称:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="add_cate_name" class="form-control" placeholder=" ">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label-left col-md-4">标签解释:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="add_remark" class="form-control" placeholder=" ">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">状态:</label>
+                        <div class="col-md-6">
+                            <select id="add_status" name="" class="selectpicker show-menu-arrow">
+                                <option value="1">有效</option>
+                                <option value="0">无效</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border:none;">
+                <div class="col-md-8">
+                    <button class="btn btn-primary form-inline" id="modal_add_submit">提&nbsp;&nbsp;&nbsp;&nbsp;交</button>
+                    <button class="btn btn-primary form-inline" id="modal_cancel_submit" style="margin-left: 30px">取&nbsp;&nbsp;&nbsp;&nbsp;消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</%block>

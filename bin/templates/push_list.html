@@ -1,0 +1,164 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+
+<%block name="title">商户端消息推送</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/common/css/toastr.css">
+  <script src="/static/common/js/jquery.dataTables.js"></script>
+  <script src="/static/main/js/push_list.js?v=0.0.223"></script>
+  <script src="/static/common/js/toastr.js"></script>
+</%block>
+
+<%block name="page">
+    <div>
+        <div>
+            <h3 style="text-align: center">商户端消息推送</h3>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" id="create" data-toggle="modal" data-target="" style="float: right;margin-right: 50px;margin-bottom: 15px;
+">+增加 商户端消息推送</button>
+        </div>
+        <table id="push_listTable" class="table"></table>
+    </div>
+
+    <style>
+        .label_push{width:110px;}
+        .li_push{margin-bottom: 5px;}
+    </style>
+
+
+
+        <!--确定窗口-->
+
+
+         <div class="modal fade" id="mySure" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="mySure_title" style="text-align: center">确定push吗?</h4>
+                </div>
+
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-primary" id="sure_confirm">&emsp;确认&emsp;</button>
+                    <button type="button" class="btn btn-primary" id="sure_cancel">&emsp;取消&emsp;</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+
+    <!--新增消息窗口-->
+    <div class="modal fade" id="myCreate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel" style="text-align: center"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group form-inline" >
+                        <input type="text" id="push_id" hidden>
+                        <label for="base_currency" class="label_push" >标题：</label>
+                        <input type="text" class="form-control" id="title">
+                    </div>
+                    <div class="form-group form-inline" >
+                        <label for="foreign_currency" class="label_push" >内容：</label>
+                        <input type="text" class="form-control" id="content">
+                    </div>
+
+                    <div class="form-group form-inline" >
+                        <label for="rate" class="label_push" style="float:left;" >一级标签：</label>
+                        <div style="float:left;">
+                        <ul style="padding:0px;">
+                            <li><label ><input name="tag_type" type="checkbox" value="0">直营</label></li>
+                            <li><label ><input name="tag_type" type="checkbox" value="1">渠道</label></li>
+                            <li><label ><input name="tag_type" type="checkbox" value="2">白牌</label></li>
+                        </ul>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+
+                    <div class="form-group form-inline" >
+                        <label for="rate" class="label_push" >推送方式：</label>
+                        <select id="mode" name="mode"><option value="" selected="selected">---------</option>
+                            <option value="0">全部推送</option>
+                            <option value="2">按用户ID</option><option value="3">按渠道ID</option></select>
+                    </div>
+                    <div class="form-group form-inline" >
+                        <label for="unit" class="label_push" >推送至：</label>
+                         <textarea class="form-control" id="to" cols="30" rows="10" placeholder="多个商户id请使用,分隔"></textarea>
+                    </div>
+                   <div class="form-group form-inline" >
+                        <label for="unit" class="label_push" >是否跳转：</label>
+                         <select id="actiontype" ><option value="0" selected="selected">无动作</option><option value="1">跳转原生或WebView</option></select>
+                    </div>
+
+                    <div class="form-group form-inline" >
+                        <label for="unit" class="label_push" >跳转链接：</label>
+                        <input type="text" class="form-control" id="link">
+                    </div>
+
+                     <div class="form-group form-inline" >
+                        <label for="unit" class="label_push" >消息类别：</label>
+                        <select id="mtype" ><option value="1">运营</option><option value="2">通知</option><option value="3">事件</option></select>
+                    </div>
+
+                    <div class="form-group form-inline" >
+                        <label for="unit" class="label_push" >关联对象名称：</label>
+                        <input type="text" class="form-control" id="ref_title">
+                    </div>
+
+                    <div class="form-group form-inline" >
+                        <label for="unit" class="label_push" style="float:left;" >平台：</label>
+
+                        <div style="float:left;">
+                        <ul id="id_platforms" style="padding:0px;">
+                            <li><label ><input  name="platforms" type="checkbox" value="0"> IOS</label></li>
+                            <li><label ><input name="platforms" type="checkbox" value="1"> Android</label></li>
+                        </ul>
+                            </div>
+                        <div style="clear:both;"></div>
+
+
+                    </div>
+
+                    <div class="form-group form-inline" >
+                        <label for="unit" class="label_push" style="float:left;" >Apptypes：</label>
+
+                        <div style="float:left;">
+                        <ul style="padding:0px;">
+
+                                    <li class="li_push"><input type="checkbox" name="apptypes" value="5">应用市场版本</li>
+                                    <li class="li_push"><input type="checkbox" name="apptypes" value="6">企业账号分发版</li>
+                                    <li class="li_push"><input type="checkbox" name="apptypes" value="7">白牌V创宝</li>
+                                    <li class="li_push"><input type="checkbox" name="apptypes" value="8">白牌达令</li>
+                                    <li class="li_push"><input type="checkbox" name="apptypes" value="9">白牌金道池</li>
+                                    <li class="li_push"><input type="checkbox" name="apptypes" value="10">白牌积积乐</li>
+                                    <li class="li_push"><input type="checkbox" name="apptypes" value="11">白牌微云商户宝</li>
+
+                                </ul>
+                            </div>
+                        <div style="clear:both;"></div>
+
+
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-primary" id="create_confirm">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;提交&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</button>
+                    <br /><br />
+                    <button type="button" class="btn btn-primary" id="delete_confirm" style="display: none;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;删除&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+
+</%block>

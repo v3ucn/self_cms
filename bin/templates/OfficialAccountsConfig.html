@@ -1,0 +1,282 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">公众号配置</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <script src="/static/common/js/jquery.dataTables.js"></script>
+  <script src="/static/common/js/jQueryRotate.js"></script>
+  <link rel="stylesheet" href="/static/common/css/font-awesome.min.css">
+  <script src="/static/main/js/OfficialAccountsConfig.js"></script>
+  <link rel="stylesheet" href="/static/main/css/officialAccountConfig.css">
+  ##带搜索的下拉选择框
+  <link rel="stylesheet" href="/static/common/css/bootstrap-select.min.css">
+  <script src="/static/common/js/bootstrap-select.min.js"></script>
+  <script src="/static/common/js/i18n/defaults-zh_CN.min.js"></script>
+
+</%block>
+
+<%block name="page">
+<div>
+    <div class="top1 form-inline">
+        <div class="form-group form-inline">
+            <label for="">公众号名称:</label>
+            <select name="" id="officialAccountName" class="selectpicker show-menu-arrow" data-live-search="true">
+                <option value=""></option>
+            </select>
+        </div>
+
+         <div class="form-group form-inline">
+            <label for="">状态:</label>
+            <select name="" id="status" class="selectpicker show-menu-arrow" style="width: 100px;">
+                <option value="">全部</option>
+                <option value="1">有效</option>
+                <option value="0">无效</option>
+            </select>
+         </div>
+
+
+        <div class="form-group form-inline">
+            <label for="">通道:</label>
+            <select  id="chnlcode_select"  style="width: 100px;">
+                <option value="">全部</option>
+                % for k,v in data['chnlcode_config'].items():
+                <option value="${k}">${v}</option>
+                % endfor
+            </select>
+         </div>
+
+         <button class="btn btn-primary" id="query" style="margin-left: 80px">查询</button>
+
+         <button class="btn btn-danger" id="add" style="margin-left: 20px">新增</button>
+    </div>
+
+    <div style="margin-top: 20px">
+        <table id="official_account_table" class="table table-striped"></table>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal_add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 700px;opacity: 1;background-color: #F5F5F5;" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel" style="text-align: center">新增／修改 公众号配置</h4>
+            <label id="change_id" hidden></label>
+        </div>
+        <div class="modal-body">
+
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">通道:</label>
+                </div>
+                <div class="col-md-1"></div>
+
+                <div class="col-md-8">
+                    <select id="chnlcode" class="selectpicker show-menu-arrow" data-live-search="true" style="width: 365px">
+                        % for k,v in data['chnlcode_config'].items():
+                        <option value="${k}">${v}</option>
+                        % endfor
+                    </select>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">公众号名称:</label>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <select name="" id="account_name" class="selectpicker show-menu-arrow" data-live-search="true" style="width: 300px">
+                        <option value="0">请选择</option>
+                    </select>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">关注APPID:</label>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <input type="text" id="appid" class="form-control" value="" style="width: 365px" readonly="readonly">
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">主体名称:</label>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <input type="text" id="main" class="form-control" value="" style="width: 365px" readonly="readonly" >
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">微信渠道号:</label>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <input type="text" id="cid" class="form-control" value="" style="width: 365px" readonly="readonly" >
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">支付APPID:</label>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <input type="text" id="pay_appid" class="form-control" value="" style="width: 365px" readonly="readonly" >
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">支付目录:</label>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" id="menu" value="" style="width: 365px" readonly="readonly" >
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">状态:</label>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <select name="" id="add_status" class="selectpicker show-menu-arrow" style="width: 300px">
+                        <option value="1">有效</option>
+                        <option value="0">无效</option>
+                    </select>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">优先级:</label>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" id="level" value="" style="width: 365px" placeholder="数字越小优先级越高，例如：10>20>30">
+                </div>
+                <div style="clear: both"></div>
+            </div>
+            <div id="area">
+                <div class="form-inline">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                        <label style="height: 34px;line-height: 34px;">条件:</label>
+                    </div>
+                    <div class="col-md-1" style="padding: 0px;">
+                        <label for="" style="height: 34px;line-height: 34px;">地区:</label>
+                    </div>
+                    <div class="form-inline col-md-8">
+                        <div>
+                            <select name="" id="province_0" class="selectpicker show-menu-arrow province" data-live-search="true" style="width: 100px">
+                                <option value="全部">全部</option>
+                            </select>
+                            <select name="" id="city_0" class="selectpicker show-menu-arrow city" multiple data-live-search="true" style="width: 100px">
+                                <option value="全部">全部</option>
+                            </select>
+                            <button id="area_add"><span class="fa fa-plus" aria-hidden="true"></button>
+                        </div>
+                    </div>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+            <div id="industry">
+                <div class="form-inline">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                        <label style="height: 34px;line-height: 34px;"></label>
+                    </div>
+                    <div class="col-md-1" style="padding: 0px;">
+                        <label for="" style="height: 34px;line-height: 34px;">行业:</label>
+                    </div>
+                    <div class="form-inline col-md-8">
+                        <div>
+                            <select name="" id="industry_f0" class="selectpicker show-menu-arrow mcca" data-live-search="true" style="width: 100px">
+                                <option value="全部">全部</option>
+                            </select>
+                            <select name="" id="industry_s0" class="selectpicker show-menu-arrow mcc" multiple data-live-search="true" style="width: 100px">
+                                <option value="全部">全部</option>
+                            </select>
+                            <button id="industry_add"><span class="fa fa-plus" aria-hidden="true"></button>
+                        </div>
+                    </div>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+
+
+
+            <div id="qudao">
+                <div class="form-inline">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                        <label style="height: 34px;line-height: 34px;"></label>
+                    </div>
+                    <div class="col-md-1" style="padding: 0px;">
+                        <label for="" style="height: 34px;line-height: 34px;">渠道:</label>
+                    </div>
+                    <div class="form-inline col-md-8">
+                        <div>
+                            <select name="" id="qudao_select" class="selectpicker show-menu-arrow" multiple data-live-search="true" style="width: 100px">
+                                <option value="全部">全部</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 col-md-offset-4">
+                    <textarea name="" id="group_area" cols="30" rows="8" style="width: 365px;height: 150px">
+
+                    </textarea>
+                </div>
+            </div>
+
+            <div style="clear: both"></div>
+
+            <div class="form-inline">
+                <div class="col-md-2 col-md-offset-4">
+                    <button class="btn btn-primary" id="submit">提交</button>
+                </div>
+                <div class="col-md-2 ">
+                    <button class="btn btn-primary" id="cancel">取消</button>
+                </div>
+            </div>
+
+            <div style="clear: both"></div>
+        </div>
+    </div>
+</div>
+</%block>

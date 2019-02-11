@@ -1,0 +1,141 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">角色管理</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/main/css/roles.css">
+  <link rel="stylesheet" href="/static/common/css/toastr.css">
+  <script src="/static/common/js/jquery.dataTables.js"></script>
+  <script src="/static/main/js/roles.js"></script>
+  <script type="text/javascript" src="/static/common/js/toastr.js"></script>
+</%block>
+
+<%block name="page">
+  <div>
+    <h3 style="text-align: center">钱方角色管理</h3>
+  </div>
+  <form class="form-inline" id="form">
+    <div class="form-group">
+      <label for="role">角色</label>
+      <input type="text" class="form-control" id="role" placeholder="模糊查询">
+    </div>
+    <input type="submit" class="form-control btn btn-success" value="查询"/>
+    <button type="button" class="btn btn-primary" id="create" data-toggle="modal" data-target="#myModal">新建</button>
+  </form>
+  <hr>
+  <table id="roleTable" class="table table-striped"></table>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="height: 100%">
+    <div class="modal-dialog" style="width: 1100px;">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="form-inline form-group role-header">
+                    <label for="role" >角色名称：   </label>
+                    <input type="text" class="form-control" id="role-name" placeholder="角色名称">
+                    <span  id="al-span" style="color: #ff0000">*可编辑/必须填</span>
+                </div>
+
+
+                <div class="form-group col-md-6" style="border-right: 1px solid lightgray;">
+
+                    <div class="form-group left-title">
+                        <label class="c-title">系统权限</label>
+                    </div>
+
+##                     <div style="margin: 5px auto">
+##                         <input type="search" class="c-search"/>
+##                     </div>
+
+                    <!--左侧选择div-->
+                    <!--<div class="input-group role-group" id="roleGroup">-->
+                    <div class="all-role-div" id="roleGroup">
+##                         <span class='form-group left-checkgroup'>
+##                             <label>
+##                                 <input type='checkbox' data-action='check' data-group="group" name="group1" value="group1">第一组
+##                             </label>
+##                         </span>
+##
+##                         <span class='form-group left-check'>
+##                             <label>
+##                                 <input type='checkbox' data-action='check' data-group="role" name="group1" value="用户查看权限1" data-id="1">用户查看权限1
+##                             </label>
+##                         </span>
+##
+##                         <span class='form-group left-checkgroup'>
+##                             <label>
+##                                 <input type='checkbox' data-action='check' data-group="group" name="group2" value="group2">第二组
+##                             </label>
+##                         </span>
+##
+##                         <span class='form-group left-check'>
+##                             <label>
+##                                 <input type='checkbox' data-action='check' data-group="role" name="group2" value="用户查看权限2" data-id="2">用户查看权限2
+##                             </label>
+##                         </span>
+##                         <span class='form-group left-check'>
+##                             <label>
+##                                 <input type='checkbox' data-action='check' data-group="role" name="group2" value="用户查看权限3" data-id="3">用户查看权限3
+##                             </label>
+##                         </span>
+##
+##                         <span class='form-group left-checkgroup'>
+##                             <label>
+##                                 <input type='checkbox' data-action='check' data-group="group" name="group3" value="group3">第三组
+##                             </label>
+##                         </span>
+##                         <span class='form-group left-check'>
+##                                 <label>
+##                                     <input type='checkbox' data-action='check' data-group="role" name="group3" value="用户查看权限4" data-id="4">用户查看权限4
+##                                 </label>
+##                         </span>
+##                         <span class='form-group left-check'>
+##                                 <label>
+##                                     <input type='checkbox' data-action='check' data-group="role" name="group3" value="用户查看权限5" data-id="5">用户查看权限5
+##                                 </label>
+##                         </span>
+##                         <span class='form-group left-check'>
+##                                 <label>
+##                                     <input type='checkbox' data-action='check' data-group="role" name="group3" value="用户查看权限6" data-id="6">用户查看权限6
+##                                 </label>
+##                         </span>
+##                         <span class='form-group left-check'>
+##                                 <label>
+##                                     <input type='checkbox' data-action='check' data-group="role" name="group3" value="用户查看权限7" data-id="7">用户查看权限7
+##                                 </label>
+##                         </span>
+                    </div>
+                </div>
+
+                <!--右侧已经选中的-->
+                <div class="col-md-6" >
+                    <div class="form-group right-title">
+                        <label class="c-title">选中的权限</label>
+                    </div>
+                    <!--<div class="input-group role-group sel-div" id="roleGroupSel" style="margin-top: 10px">-->
+                    <div class="sel-div" id="roleGroupSel" style="margin-top: 10px">
+                        <!--<span class='form-group' style="width: 33.3%;display: inline-block;text-align: center">-->
+                                <!--<label>用户查看权限</label><button class="glyphicon glyphicon-remove"></button>-->
+                            <!--</span>-->
+                    </div>
+                </div>
+            </div>
+
+            <!--<div style="clear:both; margin-top: 5px;float:right;margin-right: 5px;margin-bottom: 10px">-->
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>-->
+                <!--<button type="button" class="btn btn-primary">提交更改</button></div>-->
+
+            <div style="clear:both;"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="save">提交更改</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</%block>

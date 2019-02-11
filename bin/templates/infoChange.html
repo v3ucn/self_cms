@@ -1,0 +1,2523 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+
+<%block name="title">信息变更</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <script src="/static/common/js/jquery.dataTables.js"></script>
+  <link rel="stylesheet" href="/static/common/css/toastr.css">
+  <script src="/static/common/js/toastr.js"></script>
+  <link rel="stylesheet" href="/static/main/css/change.css">
+  <script src="/static/main/js/infoChange.js"></script>
+  <link rel="stylesheet" href="/static/common/css/font-awesome.min.css">
+  ##日期插件
+  <script type="text/javascript" src="/static/common/js/laydate/laydate.js"></script>
+  ##文件选择插件
+  <script type="text/javascript" src="/static/common/js/fileinput.min.js"></script>
+  <link rel="stylesheet" href="/static/common/css/fileinput.min.css">
+  <script type="text/javascript" src="/static/common/js/zh.js"></script>
+
+  ##下拉选择框
+  <link rel="stylesheet" href="/static/common/css/bootstrap-select.min.css">
+  <script src="/static/common/js/bootstrap-select.min.js"></script>
+  <script src="/static/common/js/i18n/defaults-eu.min.js"></script>
+</%block>
+
+<%block name="page">
+
+    <div>
+        <div class="top-1 form-inline">
+            <div class="form-group form-inline">
+                <label for="">用户ID/手机号:</label>
+                <input type="text" class="form-control" id="uid_mobile">
+            </div>
+
+            <div class="form-group form-inline">
+                <label for="">创建日期:</label>
+                <input type="text" class="laydate-icon1 layui-input" id="createtime" placeholder="" readonly="readonly" style="height: 34px">
+            </div>
+
+            <div class="form-group form-inline">
+                <label for="">处理日期:</label>
+                <input type="text" class="laydate-icon1 layui-input" id="dealtime" placeholder="" readonly="readonly" style="height: 34px">
+            </div>
+
+##             <div class="form-group form-inline">
+##                 <label for="">通道同步:</label>
+##                 <input type="text" class="form-control" id="">
+##             </div>
+
+            <button id="query_btn" class="btn btn-primary"><span class="glyphicon icon-search" aria-hidden="true"></span>查询</button>
+            <button id="add_btn" class="btn btn-primary"><span class="glyphicon icon-search" aria-hidden="true"></span>新增</button>
+
+        </div>
+        ##模态框
+        <div class="modal fade" id="add_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 500px;opacity: 1;background-color: white;" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel" style="text-align: center">新增变更</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-inline form-group" style="text-align: center">
+                        <label for="">变更用户:</label>
+                        <input type="text" class="form-control" id="" placeholder="支持用户ID/手机号" style="width: 200px" >
+                    </div>
+
+                    <div class="form-inline form-group" style="text-align: center;margin-top: 20px">
+                        <label for="">变更类型:</label>
+                        <select name="" id="change_type" class="form-control" style="width: 200px;">
+                            <option value="0">基本信息</option>
+                            <option value="1">账户信息</option>
+                            <option value="2">费率</option>
+                            <option value="3">所属凭证</option>
+                            <option value="4">基本信息审核</option>
+                            <option value="5">账户信息审核</option>
+                            <option value="6">费率审核</option>
+                            <option value="7">所属凭证审核</option>
+                        </select>
+                    </div>
+
+                    <div class="form-inline form-group" style="text-align: center;margin-bottom: 20px">
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary" id="add_sure">确定</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary" id="add_close">取消</button>
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+                    <div style="clear: both"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="top-2 form-inline" style="margin-top: 10px">
+            <label for="">审核状态:</label>
+            <label><input id="audit_type_all" class="audit_type" name="manual_status" type="checkbox" value="0" checked/>不限</label>
+            <label><input class="audit_type" name="manual_status" type="checkbox" value="1"/>等待审核</label>
+            <label><input class="audit_type" name="manual_status" type="checkbox" value="2"/>审核中</label>
+            <label><input class="audit_type" name="manual_status" type="checkbox" value="3"/>审核通过</label>
+            <label><input class="audit_type" name="manual_status" type="checkbox" value="4"/>审核拒绝</label>
+        </div>
+
+        <div class="top-2 form-inline" style="margin-top: 10px">
+            <label for="">变更类型:</label>
+            <label><input id="audit_type_all" class="audit_type" name="manual_status" type="checkbox" value="0" checked/>不限</label>
+            <label><input class="audit_type" name="manual_status" type="checkbox" value="1"/>基本信息</label>
+            <label><input class="audit_type" name="manual_status" type="checkbox" value="2"/>账户信息</label>
+            <label><input class="audit_type" name="manual_status" type="checkbox" value="3"/>结算费率</label>
+            <label><input class="audit_type" name="manual_status" type="checkbox" value="4"/>所属渠道</label>
+            <label><input class="audit_type" name="manual_status" type="checkbox" value="5"/>图片凭证</label>
+        </div>
+
+        <div class="table_conten" style="margin-top: 10px">
+            <table id="change_list" class="table table-striped" style="border: 0px"></table>
+        </div>
+    </div>
+
+
+    <div class="modal_div">
+        <!--修改基本信息页面-->
+        <div class="modal fade" id="baseinfo_change" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 800px">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="text-align: center;font-size: 14px">基本信息变更 用户ID:(<label id="id_title">122414</label>)</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <table style="width: 100%;border: 1px solid grey;">
+                            <tr>
+                                <th class="col-md-2"></th>
+                                <th class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">原信息</label>
+                                    </div>
+                                </th>
+                                <th class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">更改信息</label>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">商户类型:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <select name="" id="usertype" class="selectpicker show-menu-arrow">
+                                            <option value="">小微</option>
+                                            <option value="">个体</option>
+                                            <option value="">企业</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">用户状态:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <select name="" id="userstatus" class="selectpicker show-menu-arrow">
+                                            <option value="">小微</option>
+                                            <option value="">个体</option>
+                                            <option value="">企业</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">签约实体:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">营业执照号:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">法人代表:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">身份证:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">身份证有效期:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>至<label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input placeholder="请输入日期" id="startdate" class="laydate-icon1 layui-input input-sm" readonly="readonly" style="width: 100px"> 至 <input placeholder="请输入日期" id="enddate" class="laydate-icon1 layui-input input-sm" readonly="readonly" style="width: 100px">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">手机号:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">MCC:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <select name="" id="mccselect" class="selectpicker show-menu-arrow" data-live-search="true">
+                                            <option value="">快餐店</option>
+                                            <option value="">服装</option>
+                                            <option value="">美食</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">收据名称:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">营业地址归属:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <select name="" id="provice" class="selectpicker show-menu-arrow" style="width: 60px">
+                                            <option value="">-请选择-</option>
+                                            <option value="">上海市</option>
+                                            <option value="">深圳市</option>
+                                        </select>
+                                        <select name="" id="city" class="selectpicker show-menu-arrow" style="width: 60px;">
+                                            <option value="">-请选择-</option>
+                                            <option value="">上海</option>
+                                            <option value="">深圳</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">经营地址:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">申请备注:</td>
+                                <td class="col-md-10" colspan="2">
+                                    <textarea name="" id=""  rows="3" style="width: 100%;border: 0px;resize: none;oulilne:none; ">描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息</textarea>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <div style="clear: both"></div>
+
+                        <div style="border: 0.5px solid gainsboro"></div>
+
+                        <div>
+                            <div class="col-md-2">
+                                <label for="" style="margin-top: 10px">附件：</label>
+                            </div>
+                            <div style="clear: both"></div>
+                            <div class="form-inline image">
+                                <label id="">法人身份证正面:</label>
+                                <!--<input type="file" id="xdaTanFileImg1" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                                <input type="file" name="card1" class="myfile" value=""/>
+                            </div>
+
+                            <div class="form-inline image">
+                                <label id="">法人身份证反面:</label>
+                                <!--<input type="file" id="xdaTanFileImg2" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                                <input type="file" name="card2" class="myfile" value=""/>
+                            </div>
+
+                            <div class="form-inline image">
+                                <label id="">店铺外景门头照:</label>
+                                <!--<input type="file" id="xdaTanFileImg3" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                                <input type="file" name="card3" class="myfile" value=""/>
+                            </div>
+
+                            <div class="form-inline image">
+                                <label id="">店铺内景:</label>
+                                <!--<input type="file" id="xdaTanFileImg4" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                                <input type="file" name="card4" class="myfile" value=""/>
+                            </div>
+
+                            <div class="form-inline image">
+                                <label id="">本人站在店铺内的照片:</label>
+                                <!--<input type="file" id="xdaTanFileImg5" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                                <input type="file" name="card5" class="myfile" value=""/>
+                            </div>
+
+                            <div class="form-inline image">
+                                <label id="">营业执照:</label>
+                                <!--<input type="file" id="xdaTanFileImg6" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                                <input type="file" name="card6" class="myfile" value=""/>
+                            </div>
+
+                        </div>
+
+                        <div style="border: 0.5px solid gainsboro;margin-top: 10px"></div>
+
+                        <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                            <tr style="background-color: lightgray">
+                                <th>
+                                    *注意事项
+                                </th>
+                                <th colspan="2">
+                                    请根据具体变更要求上传所需附件
+                                </th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2"></td>
+                                <td class="col-md-2" style="color: grey;font-size: 13px">对私普通变更</td>
+                                <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；银行卡正面）</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2"></td>
+                                <td class="col-md-2" style="color: grey;font-size: 13px">对公普通变更</td>
+                                <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；营业执照；银行卡正面）</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2"></td>
+                                <td class="col-md-2" style="color: grey;font-size: 13px">对私转对公</td>
+                                <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；营业执照；银行卡正面）若注册人非法人请重新注册</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2"></td>
+                                <td class="col-md-2" style="color: grey;font-size: 13px">对公转对私</td>
+                                <td class="col-md-8" style="color: grey;font-size: 13px">1.法人收款，需提交（法人身份证正、反面；营业执照；银行卡正面；含法人签字及盖公章的授权书）；<br>
+                                    2.非法人收款，需提交（法人身份证正、反面；营业执照；被授权人身份证正、反面；银行卡正面；含法人签字及盖公章的授权书）；
+
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                            <tr style="background-color: lightgray">
+                                <th class="col-md-2">审核信息</th>
+                                <th class="col-md-10"></th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">审核状态：</td>
+                                <td class="col-md-10"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">审核备注：</td>
+                                <td class="col-md-10"></td>
+                            </tr>
+                        </table>
+
+                        <div style="clear: both"></div>
+
+                        <div style="margin-top: 30px">
+                            <div class="col-md-6" style="text-align: center">
+                                <button type="button" class="btn btn-primary">提交</button>
+                            </div>
+                            <div class="col-md-6" style="text-align: center">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            </div>
+
+                        </div>
+
+                        <div style="clear: both"></div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                            <tr style="background-color: lightgray">
+                                <th class="col-md-3">操作人</th>
+                                <th class="col-md-6">操作详情</th>
+                                <th class="col-md-3">时间</th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-3"></td>
+                                <td class="col-md-6"></td>
+                                <td class="col-md-3"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-3"></td>
+                                <td class="col-md-6"></td>
+                                <td class="col-md-3"></td>
+                            </tr>
+                        </table>
+
+                        <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                            <tr style="background-color: lightgray">
+                                <th class="col-md-3">通道</th>
+                                <th class="col-md-6">同步结果</th>
+                                <th class="col-md-3">时间</th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-3"></td>
+                                <td class="col-md-6"></td>
+                                <td class="col-md-3"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-3"></td>
+                                <td class="col-md-6"></td>
+                                <td class="col-md-3"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!--账户信息页面-->
+        <div class="modal fade" id="accountinfo_change" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel" style="text-align: center;font-size: 14px">账户信息变更 用户ID:(<label id="id_title">122414</label>)</h4>
+            </div>
+
+            <div class="modal-body">
+                <table style="width: 100%;border: 1px solid grey;">
+                    <tr>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">原信息</label>
+                            </div>
+                        </th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">更改信息</label>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">清算银行类型:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">对公</option>
+                                    <option value="">对私</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">账户名称:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">清算资金账号:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">开户行省份:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_province" class="selectpicker show-menu-arrow">
+                                    <option value="">北京市</option>
+                                    <option value="">上海市</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">开户行城市:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_city" class="selectpicker show-menu-arrow">
+                                    <option value="">北京</option>
+                                    <option value="">上海</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">开户银行:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_master" class="selectpicker show-menu-arrow">
+                                    <option value="">中国工商银行</option>
+                                    <option value="">中国建设银行</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">支行名称:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_branch" class="selectpicker show-menu-arrow">
+                                    <option value="">中国工商银行北京朝阳区支行</option>
+                                    <option value="">中国建设银行北京朝阳区支行</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">联行号:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">银行预留手机号:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">备注:</td>
+                        <td class="col-md-10" colspan="2">
+                            <textarea name="" id=""  rows="3" style="width: 100%;border: 0px;resize: none;oulilne:none; ">描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息</textarea>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="border: 0.5px solid gainsboro"></div>
+
+                <div>
+                    <div class="col-md-2">
+                        <label for="" style="margin-top: 10px">附件：</label>
+                    </div>
+                    <div style="clear: both"></div>
+                    <div class="form-inline image">
+                        <label id="">法人身份证正面:</label>
+                        <!--<input type="file" id="xdaTanFileImg1" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                        <input type="file" name="card1" class="myfile" value=""/>
+                    </div>
+
+                    <div class="form-inline image">
+                        <label id="">法人身份证反面:</label>
+                        <!--<input type="file" id="xdaTanFileImg2" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                        <input type="file" name="card1" class="myfile" value=""/>
+                    </div>
+
+                    <div class="form-inline image">
+                        <label id="">开户许可证:</label>
+                        <!--<input type="file" id="xdaTanFileImg2" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                        <input type="file" name="card1" class="myfile" value=""/>
+                    </div>
+
+                    <div class="form-inline image">
+                        <label id="">营业执照:</label>
+                        <!--<input type="file" id="xdaTanFileImg2" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                        <input type="file" name="card1" class="myfile" value=""/>
+                    </div>
+
+                    <div class="form-inline image">
+                        <label id="">被授权人身份证正面:</label>
+                        <!--<input type="file" id="xdaTanFileImg3" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                        <input type="file" name="card1" class="myfile" value=""/>
+                    </div>
+
+                    <div class="form-inline image">
+                        <label id="">被授权人身份证反面:</label>
+                        <!--<input type="file" id="xdaTanFileImg4" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                        <input type="file" name="card1" class="myfile" value=""/>
+                    </div>
+
+                    <div class="form-inline image">
+                        <label id="">银行卡正面:</label>
+                        <!--<input type="file" id="xdaTanFileImg5" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                        <input type="file" name="card1" class="myfile" value=""/>
+                    </div>
+
+                    <div class="form-inline image">
+                        <label id="">授权书:</label>
+                        <!--<input type="file" id="xdaTanFileImg6" onchange="xmTanUploadImg(this)" accept="image/*"/>-->
+                        <input type="file" name="card1" class="myfile" value=""/>
+                    </div>
+
+                </div>
+                <div style="clear: both"></div>
+                <div style="border: 0.5px solid gainsboro;margin-top: 10px"></div>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th>
+                            *注意事项
+                        </th>
+                        <th colspan="2">
+                            请根据具体变更要求上传所需附件
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2"></td>
+                        <td class="col-md-2" style="color: grey;font-size: 13px">对私普通变更</td>
+                        <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；银行卡正面）</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2"></td>
+                        <td class="col-md-2" style="color: grey;font-size: 13px">对公普通变更</td>
+                        <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；营业执照；银行卡正面）</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2"></td>
+                        <td class="col-md-2" style="color: grey;font-size: 13px">对私转对公</td>
+                        <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；营业执照；银行卡正面）若注册人非法人请重新注册</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2"></td>
+                        <td class="col-md-2" style="color: grey;font-size: 13px">对公转对私</td>
+                        <td class="col-md-8" style="color: grey;font-size: 13px">1.法人收款，需提交（法人身份证正、反面；营业执照；银行卡正面；含法人签字及盖公章的授权书）；<br>
+                            2.非法人收款，需提交（法人身份证正、反面；营业执照；被授权人身份证正、反面；银行卡正面；含法人签字及盖公章的授权书）；
+
+                        </td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-2">审核信息</th>
+                        <th class="col-md-10"></th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核状态：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核备注：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="margin-top: 30px">
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-primary">提交</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+
+                </div>
+
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="modal-footer">
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">操作人</th>
+                        <th class="col-md-6">操作详情</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">通道</th>
+                        <th class="col-md-6">同步结果</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!--费率信息页面-->
+        <div class="modal fade" id="rate_change" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel" style="text-align: center;font-size: 14px">变更--结算费率--用户ID:(<label id="id_title">122414</label>)</h4>
+            </div>
+
+            <div class="modal-body">
+                <table style="width: 100%;border: 1px solid grey;">
+                    <tr>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">原信息</label>
+                            </div>
+                        </th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">更改信息</label>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">借记卡:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">信用卡:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">微信:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">支付宝:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">QQ钱包:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">京东:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2">备注:</td>
+                        <td class="col-md-10" colspan="2">
+                            <textarea name="" id=""  rows="3" style="width: 100%;border: 0px;resize: none;oulilne:none; ">描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息</textarea>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <div style="clear: both"></div>
+                <div style="border: 0.5px solid gainsboro;margin-top: 10px"></div>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-2">审核信息</th>
+                        <th class="col-md-10"></th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核状态：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核备注：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="margin-top: 30px">
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-primary">提交</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+
+                </div>
+
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="modal-footer">
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">操作人</th>
+                        <th class="col-md-6">操作详情</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">通道</th>
+                        <th class="col-md-6">同步结果</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!--凭证变更页面-->
+        <div class="modal fade" id="certificate_change" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel" style="text-align: center;font-size: 14px">凭证变更 用户ID:(<label id="id_title">122414</label>)</h4>
+            </div>
+
+            <div class="modal-body">
+                <table style="width: 100%;border: 1px solid grey;">
+                    <tr>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">原信息</label>
+                            </div>
+                        </th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">更改信息</label>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">身份证正面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                        <div style="clear: both"></div>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">身份证背面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                        <div style="clear: both"></div>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">手持身份证合照:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">店铺外景照片:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">店铺内景照片:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">营业执照:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">开户许可证:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">银行卡正面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">手写签名照:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">授权书照片:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">被授权人身份证正面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">被授权人身份证背面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">授权法人身份证正面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">授权法人身份证背面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">业务员与申请人在收银台合影:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">连锁分店说明:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">食品卫生许可证说明:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">餐饮服务许可证:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">食品流通许可证:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">航协证:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">近期生活照:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">经营保险代理业务许可证，保险兼业:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">财务室或者大堂照:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">发票:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">进货单:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">店铺租赁合同:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">税务登记证:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">机构代码证:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">完税证明:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">收银台照:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">业务代理合同或者协议:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">银行卡背面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">其他凭证照片:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">其他凭证照片:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">其他凭证照片:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">其他凭证照片:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <input type="file" name="card5" class="myfile" value=""/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2">申请备注:</td>
+                        <td class="col-md-10" colspan="2">
+                            <textarea name="" id=""  rows="3" style="width: 100%;border: 0px;resize: none;oulilne:none; ">描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息</textarea>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="border: 0.5px solid gainsboro"></div>
+
+
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-2">审核信息</th>
+                        <th class="col-md-10"></th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核状态：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核备注：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="margin-top: 30px">
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-primary">提交</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+
+                </div>
+
+                <div style="clear: both"></div>
+            </div>
+
+
+            <div class="modal-footer">
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">操作人</th>
+                        <th class="col-md-6">操作详情</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">通道</th>
+                        <th class="col-md-6">同步结果</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+        <!--审核基本信息页面-->
+        <div class="modal fade" id="baseinfo_check" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 800px">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" style="text-align: center;font-size: 14px">基本信息变更 用户ID:(<label id="id_title">122414</label>)</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <table style="width: 100%;border: 1px solid grey;">
+                            <tr>
+                                <th class="col-md-2"></th>
+                                <th class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">原信息</label>
+                                    </div>
+                                </th>
+                                <th class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">更改信息</label>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">商户类型:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <select name="" id="usertype" class="selectpicker show-menu-arrow">
+                                            <option value="">小微</option>
+                                            <option value="">个体</option>
+                                            <option value="">企业</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">用户状态:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <select name="" id="userstatus" class="selectpicker show-menu-arrow">
+                                            <option value="">小微</option>
+                                            <option value="">个体</option>
+                                            <option value="">企业</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">签约实体:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">营业执照号:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">法人代表:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">身份证:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">身份证有效期:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>至<label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input placeholder="请输入日期" id="startdate" class="laydate-icon1 layui-input input-sm" readonly="readonly" style="width: 100px"> 至 <input placeholder="请输入日期" id="enddate" class="laydate-icon1 layui-input input-sm" readonly="readonly" style="width: 100px">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">手机号:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">MCC:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <select name="" id="mccselect" class="selectpicker show-menu-arrow" data-live-search="true">
+                                            <option value="">快餐店</option>
+                                            <option value="">服装</option>
+                                            <option value="">美食</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">收据名称:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">营业地址归属:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <select name="" id="check_provice" class="selectpicker show-menu-arrow" style="width: 60px">
+                                            <option value="">--请选择--</option>
+                                            <option value="">上海市</option>
+                                            <option value="">深圳市</option>
+                                        </select>
+                                        <select name="" id="check_city" class="selectpicker show-menu-arrow" style="width: 60px;">
+                                            <option value="">--请选择--</option>
+                                            <option value="">上海</option>
+                                            <option value="">深圳</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">经营地址:</td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <label id="">XXXXXXXX</label>
+                                    </div>
+                                </td>
+                                <td class="col-md-5">
+                                    <div class="form-group form-inline" style="text-align: left">
+                                        <input type="text" class="form-control input-sm" id="" style="border: 0px;width: 100%">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">申请备注:</td>
+                                <td class="col-md-10" colspan="2">
+                                    <textarea name="" id=""  rows="3" style="width: 100%;border: 0px;resize: none;oulilne:none; ">描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息</textarea>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <div style="clear: both"></div>
+
+                        <div style="border: 0.5px solid gainsboro"></div>
+
+                        <div style="margin-top: 30px">
+                            <div class="col-md-12" style="background-color: lightgray;height: 30px">
+                                <label for="" style="line-height: 30px">附件：</label>
+                            </div>
+
+                            <div style="clear: both"></div>
+
+                            <div class="col-md-4">
+                                <p><label id="">法人身份证正面:</label></p>
+                                <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                            </div>
+
+                            <div class="col-md-4">
+                                <p><label id="">法人身份证反面:</label></p>
+                                <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                            </div>
+
+                            <div class="col-md-4">
+                                <p><label id="">店铺外景门头照:</label></p>
+                                <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                            </div>
+
+                            <div class="col-md-4">
+                                <p><label id="">店铺内景:</label></p>
+                                <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                            </div>
+
+                            <div class="col-md-4">
+                                <p><label id="">本人站在店铺内的照片:</label></p>
+                                <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                            </div>
+
+                            <div class="col-md-4">
+                                <p><label id="">营业执照:</label></p>
+                                <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                            </div>
+
+                        </div>
+
+                        <div style="clear: both"></div>
+                        <div style="border: 0.5px solid gainsboro;margin-top: 10px"></div>
+
+                        <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                            <tr style="background-color: lightgray">
+                                <th>
+                                    *注意事项
+                                </th>
+                                <th colspan="2">
+                                    请根据具体变更要求上传所需附件
+                                </th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2"></td>
+                                <td class="col-md-2" style="color: grey;font-size: 13px">对私普通变更</td>
+                                <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；银行卡正面）</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2"></td>
+                                <td class="col-md-2" style="color: grey;font-size: 13px">对公普通变更</td>
+                                <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；营业执照；银行卡正面）</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2"></td>
+                                <td class="col-md-2" style="color: grey;font-size: 13px">对私转对公</td>
+                                <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；营业执照；银行卡正面）若注册人非法人请重新注册</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2"></td>
+                                <td class="col-md-2" style="color: grey;font-size: 13px">对公转对私</td>
+                                <td class="col-md-8" style="color: grey;font-size: 13px">1.法人收款，需提交（法人身份证正、反面；营业执照；银行卡正面；含法人签字及盖公章的授权书）；<br>
+                                    2.非法人收款，需提交（法人身份证正、反面；营业执照；被授权人身份证正、反面；银行卡正面；含法人签字及盖公章的授权书）；
+
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                            <tr style="background-color: lightgray">
+                                <th class="col-md-2">审核信息</th>
+                                <th class="col-md-10"></th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">审核状态：</td>
+                                <td class="col-md-10"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-2">审核备注：</td>
+                                <td class="col-md-10"></td>
+                            </tr>
+                        </table>
+
+                        <div style="clear: both"></div>
+
+                        <div style="margin-top: 30px">
+                            <div class="col-md-6" style="text-align: center">
+                                <button type="button" class="btn btn-primary">通过</button>
+                            </div>
+                            <div class="col-md-6" style="text-align: center">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">拒绝</button>
+                            </div>
+
+                        </div>
+
+                        <div style="clear: both"></div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                            <tr style="background-color: lightgray">
+                                <th class="col-md-3">操作人</th>
+                                <th class="col-md-6">操作详情</th>
+                                <th class="col-md-3">时间</th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-3"></td>
+                                <td class="col-md-6"></td>
+                                <td class="col-md-3"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-3"></td>
+                                <td class="col-md-6"></td>
+                                <td class="col-md-3"></td>
+                            </tr>
+                        </table>
+
+                        <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                            <tr style="background-color: lightgray">
+                                <th class="col-md-3">通道</th>
+                                <th class="col-md-6">同步结果</th>
+                                <th class="col-md-3">时间</th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-3"></td>
+                                <td class="col-md-6"></td>
+                                <td class="col-md-3"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-3"></td>
+                                <td class="col-md-6"></td>
+                                <td class="col-md-3"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!--账户信息审核页面-->
+        <div class="modal fade" id="accountinfo_check" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel" style="text-align: center;font-size: 14px">账户信息变更 用户ID:(<label id="id_title">122414</label>)</h4>
+            </div>
+
+            <div class="modal-body">
+                <table style="width: 100%;border: 1px solid grey;">
+                    <tr>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">原信息</label>
+                            </div>
+                        </th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">更改信息</label>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">清算银行类型:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">对公</option>
+                                    <option value="">对私</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">账户名称:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">清算资金账号:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">开户行省份:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_province" class="selectpicker show-menu-arrow">
+                                    <option value="">北京市</option>
+                                    <option value="">上海市</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">开户行城市:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_city" class="selectpicker show-menu-arrow">
+                                    <option value="">北京</option>
+                                    <option value="">上海</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">开户银行:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_master" class="selectpicker show-menu-arrow">
+                                    <option value="">中国工商银行</option>
+                                    <option value="">中国建设银行</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">支行名称:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_branch" class="selectpicker show-menu-arrow">
+                                    <option value="">中国工商银行北京朝阳区支行</option>
+                                    <option value="">中国建设银行北京朝阳区支行</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">联行号:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">银行预留手机号:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <input type="text" class="form-control input-sm col-md-12" id="" style="border: 0px;width: 100%;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">备注:</td>
+                        <td class="col-md-10" colspan="2">
+                            <textarea name="" id=""  rows="3" style="width: 100%;border: 0px;resize: none;oulilne:none; ">描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息</textarea>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="border: 0.5px solid gainsboro"></div>
+
+                <div style="margin-top: 30px">
+                    <div class="col-md-12" style="background-color: gainsboro;height: 30px">
+                        <label for="" style="line-height: 30px">附件：</label>
+                    </div>
+
+                    <div style="clear: both"></div>
+
+                    <div class="col-md-4">
+                        <p><label id="">法人身份证正面:</label></p>
+                        <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                    </div>
+
+                    <div class="col-md-4">
+                        <p><label id="">法人身份证反面:</label></p>
+                        <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                    </div>
+
+                    <div class="col-md-4">
+                        <p><label id="">银行卡正面:</label></p>
+                        <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                    </div>
+
+                    <div class="col-md-4">
+                        <p><label id="">开户许可证:</label></p>
+                        <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                    </div>
+
+                    <div class="col-md-4">
+                        <p><label id="">营业执照:</label></p>
+                        <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                    </div>
+
+                    <div class="col-md-4">
+                        <p><label id="">法人授权书:</label></p>
+                        <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                    </div>
+
+                    <div class="col-md-4">
+                        <p><label id="">被授权人身份证正面:</label></p>
+                        <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                    </div>
+
+                    <div class="col-md-4">
+                        <p><label id="">被授权人身份证反面:</label></p>
+                        <img style="height: 150px;width: 150px" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1217287628,1951395233&fm=27&gp=0.jpg">
+                    </div>
+
+                </div>
+                <div style="clear: both"></div>
+                <div style="border: 0.5px solid gainsboro;margin-top: 10px"></div>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: gainsboro">
+                        <th>
+                            *注意事项
+                        </th>
+                        <th colspan="2">
+                            请根据具体变更要求上传所需附件
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2"></td>
+                        <td class="col-md-2" style="color: grey;font-size: 13px">对私普通变更</td>
+                        <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；银行卡正面）</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2"></td>
+                        <td class="col-md-2" style="color: grey;font-size: 13px">对公普通变更</td>
+                        <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；营业执照；银行卡正面）</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2"></td>
+                        <td class="col-md-2" style="color: grey;font-size: 13px">对私转对公</td>
+                        <td class="col-md-8" style="color: grey;font-size: 13px">需提交（法人身份证正、反面；营业执照；银行卡正面）若注册人非法人请重新注册</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2"></td>
+                        <td class="col-md-2" style="color: grey;font-size: 13px">对公转对私</td>
+                        <td class="col-md-8" style="color: grey;font-size: 13px">1.法人收款，需提交（法人身份证正、反面；营业执照；银行卡正面；含法人签字及盖公章的授权书）；<br>
+                            2.非法人收款，需提交（法人身份证正、反面；营业执照；被授权人身份证正、反面；银行卡正面；含法人签字及盖公章的授权书）；
+
+                        </td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-2">审核信息</th>
+                        <th class="col-md-10"></th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核状态：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核备注：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="margin-top: 30px">
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-primary">通过</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">拒绝</button>
+                    </div>
+
+                </div>
+
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="modal-footer">
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">操作人</th>
+                        <th class="col-md-6">操作详情</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">通道</th>
+                        <th class="col-md-6">同步结果</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!--费率审核页面-->
+        <div class="modal fade" id="rate_check" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel" style="text-align: center;font-size: 14px">变更--结算费率--用户ID:(<label id="id_title">122414</label>)</h4>
+            </div>
+
+            <div class="modal-body">
+                <table style="width: 100%;border: 1px solid grey;">
+                    <tr>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">原信息</label>
+                            </div>
+                        </th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">更改信息</label>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">借记卡:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">信用卡:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">微信:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">支付宝:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">QQ钱包:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">京东:</td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">XXXXXXXX</label>
+                            </div>
+                        </td>
+                        <td class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <select name="" id="bank_type" class="selectpicker show-menu-arrow">
+                                    <option value="">0.005</option>
+                                    <option value="">0.005</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2">备注:</td>
+                        <td class="col-md-10" colspan="2">
+                            <textarea name="" id=""  rows="3" style="width: 100%;border: 0px;resize: none;oulilne:none; ">描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息</textarea>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <div style="clear: both"></div>
+                <div style="border: 0.5px solid gainsboro;margin-top: 10px"></div>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-2">审核信息</th>
+                        <th class="col-md-10"></th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核状态：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核备注：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="margin-top: 30px">
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-primary">通过</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">拒绝</button>
+                    </div>
+
+                </div>
+
+                <div style="clear: both"></div>
+            </div>
+
+            <div class="modal-footer">
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">操作人</th>
+                        <th class="col-md-6">操作详情</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">通道</th>
+                        <th class="col-md-6">同步结果</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!--凭证审核页面-->
+        <div class="modal fade" id="certificate_check" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel" style="text-align: center;font-size: 14px">凭证变更 用户ID:(<label id="id_title">122414</label>)</h4>
+            </div>
+
+            <div class="modal-body">
+                <table style="width: 100%;border: 1px solid grey;">
+                    <tr>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">原信息</label>
+                            </div>
+                        </th>
+                        <th class="col-md-5">
+                            <div class="form-group form-inline" style="text-align: left">
+                                <label id="">更改信息</label>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">身份证正面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <div style="clear: both"></div>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">身份证背面:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <div style="clear: both"></div>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">手持身份证合照:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">店铺外景照片:</td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                        <td class="col-md-5">
+                            <img src="http://img5.imgtn.bdimg.com/it/u=4054457940,968381391&fm=11&gp=0.jpg" alt="" style="width: 100%;margin: 30px 0px;">
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="col-md-2">申请备注:</td>
+                        <td class="col-md-10" colspan="2">
+                            <textarea name="" id=""  rows="3" style="width: 100%;border: 0px;resize: none;oulilne:none; ">描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息</textarea>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="border: 0.5px solid gainsboro"></div>
+
+
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-2">审核信息</th>
+                        <th class="col-md-10"></th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核状态：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">审核备注：</td>
+                        <td class="col-md-10"></td>
+                    </tr>
+                </table>
+
+                <div style="clear: both"></div>
+
+                <div style="margin-top: 30px">
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-primary">通过</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">拒绝</button>
+                    </div>
+
+                </div>
+
+                <div style="clear: both"></div>
+            </div>
+
+
+            <div class="modal-footer">
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">操作人</th>
+                        <th class="col-md-6">操作详情</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;border: 1px solid grey;margin-top: 30px">
+                    <tr style="background-color: lightgray">
+                        <th class="col-md-3">通道</th>
+                        <th class="col-md-6">同步结果</th>
+                        <th class="col-md-3">时间</th>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-6"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+    </div>
+
+
+</%block>

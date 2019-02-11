@@ -1,0 +1,54 @@
+# coding: utf-8
+
+<%inherit file="main/base.html" />
+
+<%block name="title">重置密码</%block>
+
+<%block name="base_addition_header">
+    <link rel="stylesheet" href="/static/main/css/login.css">
+    <script type="text/javascript" src="/static/main/js/resetpwd.js"></script>
+</%block>
+
+<%block name="base_body_main">
+  <div id="loginModal" class="modal show">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8 col-md-offset-2">
+            <div class="modal-header">
+                <!--<button type="button" class="close">x</button>-->
+                <h3 class="text-center text-primary">修改密码</h3>
+            </div>
+            <div class="modal-body">
+                <form action="/reset_pwd" class="form center-block" role="form" method="post" id="reset">
+                    <div class="form-group">
+                        <input  id='username' type="text" name="username" class="form-control input-lg" placeholder="请输入手机号" value=${data.get('username') if data.get('username') else ''} >
+                    </div>
+
+                    <div class="form-group">
+                        <input id="password" oncopy="return false" onpaste="return false" oncut="return false" oncontextmenu="return false" type="password" name="password_old" class="form-control input-lg" placeholder="请输入原密码">
+                    </div>
+
+                    <span class="capslock" hidden>大写锁定已打开</span>
+
+                    <div class="form-group">
+                        <input id="rpassword" oncopy="return false" onpaste="return false" oncut="return false" oncontextmenu="return false" type="password" name="password_new" class="form-control input-lg" placeholder="请输入新密码">
+                    </div>
+
+                    <span class="capslock1" hidden>大写锁定已打开</span>
+
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-primary btn-lg btn-block" value="确认修改">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+    %if data.get('success') == 0:
+        <div class="alert alert-success" role="alert">
+            <span>${data.get('msg')}</span><a href=${data.get('tourl') if data.get('tourl') else ''}  id='reset' class="alert-link">      ${data.get('toword') if data.get('toword') else ''}  </a>
+        </div>
+    %endif
+</%block>

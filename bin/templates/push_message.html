@@ -1,0 +1,76 @@
+#coding=utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">推送信息</%block>
+<%block name="addition_header">
+    <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/common/css/viewer.min.css">
+  <link rel="stylesheet" href="/static/main/css/push_message.css">
+    <script src="/static/common/js/jquery-3.2.1.min.js"></script>
+  <script src="/static/common/js/jquery.dataTables.js"></script>
+  <script src="/static/main/js/push_message.js"></script>
+  <script src="/static/common/js/viewer.min.js"></script>
+  <script src="/static/common/js/jQueryRotate.js"></script>
+</%block>
+<%block name="page">
+    <li width="50%">
+    <form action="/push_message" method="post" id="push">
+        <ul id="total">
+            <li><h3>App消息推送</h3></li>
+            <li>
+                <h3>配置参数</h3>
+                <ul>
+                    <li>标题：<input type="text" name="title" id="title"></li>
+                    <li>内容：<input type="text" name="content" id="content"></li>
+                    <li style="display:none;color:red" id="input_ms">输入内容不能为空</li>
+                    <li>推送方式：<select name="mtype" id="">
+                        <option value="1">用户ID</option>
+                        <option value="2">渠道ID</option>
+                        <option value="3">全部推送</option>
+                    </select></li>
+                    <li>推送至：<textarea name="to" cols="30" rows="5" id="to_w"></textarea></li>
+                    <li>跳转链：<input type="text" name="link_url" id="link_url"></li>
+                    <li>消费类型：<select name="mode" id="">
+                        <option value="1">运营</option>
+                        <option value="2">通知</option>
+                        <option value="3">事件</option>
+                    </select>
+                    </li>
+                    <li>
+                        <p>推送类型</p>
+                        <div class="top_type">
+                            <div class="left_type">Platforms:</div>
+                            <div class="right_type">
+                                <ul id="plateform">
+                                    <li><input type="checkbox" name="plateform_1" value="0">IOS</li>
+                                    <li><input type="checkbox" name="plateform_2" value="1">Android</li>
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bottom_type">
+                            <div class="left_type">Apptypes:</div>
+                            <div class="right_type">
+                                <ul id="apptype">
+                                    <li><input type="checkbox" name="apptype_1" value="5">应用市场版本</li>
+                                    <li><input type="checkbox" name="apptype_2" value="6">企业账号分发版</li>
+                                    <li><input type="checkbox" name="apptype_3" value="7">白牌V创宝</li>
+                                    <li><input type="checkbox" name="apptype_4" value="8">白牌达令</li>
+                                    <li><input type="checkbox" name="apptype_5" value="9">白牌金道池</li>
+                                    <li><input type="checkbox" name="apptype_6" value="10">白牌积积乐</li>
+                                    <li><input type="checkbox" name="apptype_7" value="11">白牌微云商户宝</li>
+                                    <li style="display:none;color:red" id="check_ms">请最少选择一个</li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </li>
+                </ul>
+
+            </li>
+            <input type="submit" value="保存" style="width:50px;height:30px;">
+        </ul>
+    </form>
+    </li>
+</%block>

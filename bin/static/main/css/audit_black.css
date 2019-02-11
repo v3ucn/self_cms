@@ -1,0 +1,21 @@
+.form-group {
+    margin-right: 30px;
+}
+
+.result {
+    margin-top: 30px;
+}
+
+.fa-edit, .fa-trash-o {
+    font-size: x-large;
+}
+
+#valueNew.invalid {
+    border-color: red;
+    border-width: 2px;
+}
+
+#valueEdit.invalid {
+    border-color: red;
+    border-width: 2px;
+}

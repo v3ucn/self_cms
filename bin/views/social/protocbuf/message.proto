@@ -1,0 +1,35 @@
+package msg;
+message User
+{
+    required int32 user_id = 1;      // 用户ID
+    required string nickname = 2;    // 昵称
+    required string avatar = 3;      // 头像
+}
+message Msg
+{
+    required string msg_id = 1;      // 消息ID
+    required Msgtype type = 2;       // 消息类型
+    required string content = 3;     // 消息内容
+    required string topic_id = 4;    // 话题ID
+    required string topic_name = 5;  // 话题名称
+    optional string post_id = 6;     // 帖子ID
+    optional string post_img = 7;    // 帖子图片
+    optional string timestamp = 8;   // 时间戳
+    optional int32 actiontype = 9;   // 是否跳转
+    optional string url = 10;        // 跳转url地址
+    repeated User users = 11;        // 用户列表
+    enum Msgtype
+    {
+        SYSTEM = 0;                 // 系统
+        AUDIT_PASS = 21;            // 审核通过
+        AUDIT_NOPASS = 22;          // 审核失败
+        POST_UP = 23;               // 顶贴
+        POST_REPLY = 24;            // 回帖
+        GOOD_BEGIN = 25;            // 特卖开始
+        COMMENT_REPLY = 26;         // 评论
+    }
+    optional int32 topic_type = 12 [default = 0];                 // 话题类型，0:普通，1:特卖
+    optional string comment_id = 13 [default = ''];               // 评论ID
+    optional string comment_content = 14 [default = ''];          // 评论内容
+    optional int32 activity_id = 15 [default = 0];                // 活动ID
+}

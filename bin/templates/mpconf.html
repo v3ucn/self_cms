@@ -1,0 +1,239 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">公众号配置</%block>
+
+<%block name="addition_header">
+  <script type="text/javascript" src="/static/common/js/laydate/laydate.js"></script>
+  <script type="text/javascript" src="/static/common/js/jquery.dataTables.js"></script>
+  <script src="/static/common/js/bootstrap-select.min.js"></script>
+  <script src="/static/common/js/i18n/defaults-zh_CN.min.js"></script>
+  <link rel="stylesheet" href="/static/common/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="/static/common/css/style.css">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/common/css/dataTables.bootstrap.css">
+  <link rel="stylesheet" href="/static/main/css/mpconf.css">
+  <script type="text/javascript" src="/static/main/js/mpconf.js?1112"></script>
+</%block>
+
+<%block name="page">
+<div>
+    <div class="top1 form-inline">
+        <div class="form-inline form-group">
+            <label for="">公众号名称:</label>
+            <select id="query_appname" name="" class="selectpicker show-menu-arrow" data-live-search="true">
+                <option value="">全部</option>
+                % for i in data['appname']:
+                <option value="${i}">${i}</option>
+                % endfor
+
+            </select>
+        </div>
+        <div class="form-inline form-group">
+            <label for="">主体名称:</label>
+            <input type="text" class="form-control" id="query_main">
+        </div>
+        <div class="form-inline form-group">
+            <label for="">微信渠道号:</label>
+            <input type="text" class="form-control" id="query_cid">
+        </div>
+    <div class="top2 form-inline m-t">
+        <div class="form-inline form-group">
+            <label for="">公众号APPID:</label>
+            <input type="text" class="form-control" id="query_appid">
+        </div>
+        <div class="form-inline form-group m-l-lg">
+            <button class="btn btn-primary form-inline" id="query_submit">查询</button>
+            <button class="btn btn-primary form-inline" id="add_submit">新增</button>
+            <button class="btn btn-danger form-inline m-l-lg" id="expo_submit">导出</button>
+        </div>
+    </div>
+
+    <div class="m-t-lg">
+        <table id="mpconf_table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>主体名称</th>
+                    <th>微信渠道号</th>
+                    <th>支付APPID</th>
+                    <th>支付目录</th>
+                    <th>公众号名称</th>
+                    <th>公众号APPID</th>
+                    <th>商户ID</th>
+                    <th>支持通道</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody class="operation">
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="edit_modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog"style="width: 700px;opacity: 1;background-color: #F5F5F5;">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal">&nbsp;&nbsp;<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <!--title-->
+                <h4 class="modal_title">
+                    公众号配置明细
+                </h4>
+                <!--title-->
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" style="padding: 0 80px 0 90px">
+                    <div class="form-group">
+                        <div class="col-md-6" style="display:none">
+                            <label id="mpconf_id" style="display:none"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label-left col-md-4">支持通道:</label>
+                        <div class="col-md-6">
+                            <select id="edit_chnlcode" class="selectpicker" data-live-search="true" data-width='234px'>
+                                % for k,v in data['chnlcode_config'].items():
+                                <option value="${k}">${v}</option>
+                                % endfor
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label-left col-md-4">商户ID:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="edit_uid" class="form-control" placeholder="请输入商户ID,以逗号分割">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">主体名称:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="edit_main" class="form-control" placeholder="请输入主体名称">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">微信渠道号:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="edit_cid" class="form-control" placeholder="请输入在通道已备份成功的渠道号">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">支付APPID:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="edit_pay_appid" class="form-control" placeholder="请输入支付APPID">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">支付目录:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="edit_menu" class="form-control" placeholder="多个链接以逗号隔开">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">公众号名称:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="edit_appname" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">公众号APPID:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="edit_appid" class="form-control" readonly>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border:none;">
+                <div class="col-md-8">
+                    <button class="btn btn-primary form-inline" id="modal_submit">提&nbsp;&nbsp;&nbsp;&nbsp;交</button>
+                    <button class="btn btn-primary form-inline" onclick="$('#edit_modal').modal('hide');" style="margin-left: 30px">取&nbsp;&nbsp;&nbsp;&nbsp;消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="add_modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog"style="width: 700px;opacity: 1;background-color: #F5F5F5;">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal">&nbsp;&nbsp;<span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <!--title-->
+                <h4 class="modal_title">
+                    公众号配置明细
+                </h4>
+                <!--title-->
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" style="padding: 0 80px 0 90px">
+                    <div class="form-group">
+                        <div class="col-md-6" style="display:none">
+                            <label id="mpconf_id" style="display:none"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label-left col-md-4">支持通道:</label>
+                        <div class="col-md-6">
+                            <select id="add_chnlcode" class="selectpicker" data-live-search="true" data-width='234px'>
+                                % for k,v in data['chnlcode_config'].items():
+                                <option value="${k}">${v}</option>
+                                % endfor
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label-left col-md-4">商户ID:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="add_uid" class="form-control" placeholder="请输入商户ID,以逗号分割">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">主体名称:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="add_main" class="form-control" placeholder="请输入主体名称">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">微信渠道号:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="add_cid" class="form-control" placeholder="请输入在通道已备份成功的渠道号">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">支付APPID:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="add_pay_appid" class="form-control" placeholder="请输入支付APPID">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">支付目录:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="add_menu" class="form-control" placeholder="多个链接以逗号隔开">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">公众号名称:</label>
+                        <div class="col-md-6">
+                            <select id="add_appname" name="" class="selectpicker show-menu-arrow" data-live-search="true" data-width='234px'>
+                                % for k,v in data['appname'].items():
+                                <option value="${v}">${k}</option>
+                                % endfor
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label-left col-md-4">公众号APPID:</label>
+                        <div class="col-md-6">
+                            <input type="text" id="add_appid" class="form-control" readonly>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border:none;">
+                <div class="col-md-8">
+                    <button class="btn btn-primary form-inline" id="modal_submit_add">提&nbsp;&nbsp;&nbsp;&nbsp;交</button>
+                    <button class="btn btn-primary form-inline" id="modal_submit_cancel" style="margin-left: 30px">取&nbsp;&nbsp;&nbsp;&nbsp;消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</%block>

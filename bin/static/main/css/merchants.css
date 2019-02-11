@@ -1,0 +1,64 @@
+.form-inline .form-group {
+    margin: 5px 0;
+}
+body{
+    line-height: normal;
+}
+
+
+#base_info label{
+    font-size: 13px;
+    font-weight: normal;
+}
+#base_info .form-group{
+    margin: 5px 0px;
+}
+
+#channel_info label{
+    font-size: 13px;
+    font-weight: normal;
+}
+#channel_info .form-group{
+    margin: 5px 0px;
+}
+
+#voucher_info label{
+    font-size: 13px;
+    font-weight: normal;
+}
+#voucher_info .form-group{
+    margin: 5px 0px;
+}
+
+#bind_terminal label{
+    font-size: 13px;
+    font-weight: normal;
+}
+#bind_terminal .form-group{
+    margin: 5px 0px;
+}
+
+th{
+    text-align: center;
+}
+
+td{
+    text-align: center;
+}
+
+.head{
+    height: 30px;
+    background-color: #2e6da4;
+    text-align: center;
+    line-height: 30px;
+    color: #fff;
+    margin-top: 5px;
+    border-radius:5px;
+}
+
+.single_div{
+    padding: 5px 5px;
+    text-align: center;
+    border: 1px solid #e5e5e5;
+    margin-top: 5px;
+}

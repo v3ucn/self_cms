@@ -1,0 +1,17 @@
+package msg;
+
+message Msg
+{
+    required string msg_id = 1;      // 消息ID
+    required int32 msg_type = 2;       // 消息类型
+    required string title = 3;     // 消息内容
+    required string content = 4;    // 话题ID
+    optional string ref_id = 5;     // 帖子ID
+    optional int32 ref_type = 6;    // 帖子图片
+    optional string ref_title = 7;   // 时间戳
+    optional string timestamp = 8;   // 是否跳转
+    optional int32 actiontype = 9;   // 是否跳转
+    optional string url = 10;        // 跳转url地址
+
+}
+

@@ -1,0 +1,311 @@
+# coding: utf-8
+
+<%inherit file="main/main.html" />
+
+<%block name="title">商户配置</%block>
+
+<%block name="addition_header">
+  <link rel="stylesheet" href="/static/common/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/static/common/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/static/common/css/style.css">
+  <link rel="stylesheet" href="/static/main/css/MerchantConfig.css">
+  <link rel="stylesheet" href="/static/common/css/bootstrap-select.min.css">
+  <script src="/static/common/js/jquery.dataTables.js"></script>
+  <script src="/static/common/js/jQueryRotate.js"></script>
+  <script src="/static/main/js/MerchantConfig.js?1111"></script>
+  ##带搜索的下拉选择框
+  <script src="/static/common/js/bootstrap-select.min.js"></script>
+  <script src="/static/common/js/i18n/defaults-zh_CN.min.js"></script>
+
+  <script type="text/javascript" src="/static/common/js/laydate/laydate.js"></script>
+</%block>
+
+<%block name="page">
+<div>
+    <div class="top1 form-inline">
+        <div class="form-group form-inline">
+            <label for="">商户ID:</label>
+            <input type="text" class="form-control" id="uids" placeholder="输入商户ID" style="width: 100px">
+        </div>
+
+        <div class="form-group form-inline">
+            <label for="">&nbsp;行&nbsp;业:</label>
+            <select name="" id="mcca" class="selectpicker show-menu-arrow" data-live-search="true">
+                <option value="">全部</option>
+            </select>
+            <select name="" id="mcc" class="selectpicker show-menu-arrow" data-live-search="true">
+                <option value="">全部</option>
+            </select>
+        </div>
+
+        <div class="form-group form-inline">
+            <label for="">经营省市:</label>
+            <select name="" id="pro" class="selectpicker show-menu-arrow" data-live-search="true">
+                <option value="">全部</option>
+            </select>
+            <select name="" id="city" class="selectpicker show-menu-arrow" data-live-search="true">
+                <option value="">全部</option>
+            </select>
+        </div>
+
+        <div class="form-group form-inline">
+            <label for="">所属渠道:</label>
+            <select name="" id="qudao" class="selectpicker show-menu-arrow" data-live-search="true" style="width: 100px;">
+                <option value="">全部</option>
+            </select>
+        </div>
+        <div class="form-group form-inline">
+            <label for="">渠道类型:</label>
+            <select name="" id="qudao_type" class="selectpicker show-menu-arrow" style="width: 100px;">
+                <option value="">全部</option>
+                % if data['dis_all']:
+                    <option value="1">白牌</option>
+                    <option value="2">联名</option>
+                    <option value="3">合伙人</option>
+                % endif
+                <option value="4">直营</option>
+                <option value="5">钱台</option>
+                <option value="6">网络电销</option>
+            </select>
+        </div>
+    </div>
+    <div class="top2 form-inline" style="margin-top: 10px">
+        <div class="form-group form-inline">
+            <label for="">公众号:</label>
+
+            <select name="" id="appname" class="selectpicker show-menu-arrow" data-live-search="true" multiple style="width: 100px;">
+##                 <option value="">全部</option>
+            </select>
+
+        </div>
+        <div class="form-group form-inline">
+            <label for="cate_code" class="label-control">用户标签</label>
+            <select id="cate_code" name="" class="form-control selectpicker" multiple data-live-search="true">
+            </select>
+        </div>
+
+         <div class="form-group form-inline">
+            <label for="">交易日期：</label>
+            <!--<input type='text' class="form-control" id='startdateI'/>-->
+            <input placeholder="请输入日期" id="startdate" class="laydate-icon1 layui-input" readonly="readonly" style="height: 34px;">
+            <label for="startdate"><i class="fa fa-calendar"></i></label>
+             <!--<input placeholder="请输入日期" id="" class="laydate-icon1 layui-input" onClick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">-->
+            <!--<label class="glyphicon glyphicon-calendar" id="startdateL"></label>-->
+            至
+            <!--<input type='text' class="form-control" id='enddateI'/>-->
+            <input placeholder="请输入日期" id="enddate" class="laydate-icon2 layui-input" readonly="readonly" style="height: 34px">
+            <label for="enddate"><i class="fa fa-calendar"></i></label>
+            <!--<input placeholder="请输入日期" id="enddate" class="laydate-icon2 layui-input" onClick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">-->
+            <!--<label class="glyphicon glyphicon-calendar" id="enddateL"></label>-->
+        </div>
+##         <div class="form-group form-inline">
+##             <label for="">最近收款:</label>
+##             <select name="" id="receive_time" class="selectpicker show-menu-arrow" style="width: 100px;">
+##                 <option value="">全部</option>
+##                 <option value="30">最近30天</option>
+##                 <option value="21">最近三周</option>
+##                 <option value="14">最近两周</option>
+##                 <option value="7">最近一周</option>
+##             </select>
+##         </div>
+##         <div class="form-group form-inline">
+##             <label for="">关注时间:</label>
+##             <select name="" id="utime" class="selectpicker show-menu-arrow" style="width: 100px;">
+##                 <option value="">全部</option>
+##                 <option value="7">一周前</option>
+##                 <option value="14">两周前</option>
+##                 <option value="21">三周前</option>
+##                 <option value="30">30天前</option>
+##             </select>
+##         </div>
+
+        <button class="btn btn-primary m-t" id="query" style="margin-left: 80px">查询</button>
+
+        <button class="btn btn-warning m-t" id="change" style="margin-left: 20px">修改</button>
+
+        <button class="btn btn-success m-t" id="export" style="margin-left: 20px">导出</button>
+    </div>
+    <div id="table_div" style="margin-top: 20px;">
+        <table id="MerchantConfigTable" class="table table-striped" style="width: 1500px">
+            <thead>
+##                 <tr>
+##                     <th><input id="check_all" class="" name="" type="checkbox" value="-1"/>&nbsp;&nbsp;商户ID</th>
+##                     <th>商户名称</th>
+##                     <th>行业</th>
+##                     <th>省份</th>
+##                     <th>城市</th>
+##                     <th>所属渠道</th>
+##                     <th>渠道类型</th>
+## ##                     <th>最后一笔微信收款时间</th>
+##                     <th>关注公众号</th>
+##                     <th>关注时间</th>
+##                     <th>交易笔数</th>
+##                     <th>新增粉丝数</th>
+##                     <th>昨日吸粉率</th>
+##                     <th>操作</th>
+##                 </tr>
+                <tr>
+                    <th><input id="check_all" class="" name="" type="checkbox" value="-1"/>&nbsp;&nbsp;商户ID</th>
+                    <th>商户名称</th>
+                    <th>交易日期</th>
+                    <th>支付通道</th>
+                    <th>通道商户号</th>
+                    <th>关注公众号</th>
+                    <th>关注时间</th>
+                    <th>新增粉丝数</th>
+                    <th>微信交易笔数</th>
+                    <th>吸粉率</th>
+##                     <th>当前关注</th>
+##                     <th>关注时间</th>
+                    <th>行业</th>
+                    <th>省份</th>
+                    <th>城市</th>
+                    <th>所属渠道</th>
+                    <th>渠道类型</th>
+                    <th>标签</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="detail_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 700px;opacity: 1;background-color: #F5F5F5;" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel" style="text-align: center">商户配置详情</h4>
+            <label id="change_id" hidden></label>
+        </div>
+        <div class="modal-body">
+            <table id="history_detail" class="table table-striped"></table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="change_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 650px;opacity: 1;background-color: #F5F5F5;" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="" style="text-align: center">商户配置修改</h4>
+        </div>
+        <div class="modal-body">
+            <div class="form-inline" style="margin-top: 20px">
+                <div class="col-md-offset-1 col-md-3">
+                    <label for="">商&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;数：</label>
+                </div>
+                <div class="col-md-8">
+                    <label id="shop_num"></label>
+                </div>
+            </div>
+            <div style="clear: both"></div>
+
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">通道:</label>
+                </div>
+                <div class="col-md-1"></div>
+
+                <div class="col-md-8">
+                    <select id="chnlcode" class="selectpicker show-menu-arrow" data-live-search="true" style="width: 360px">
+                        <option value="0">请选择</option>
+                        % for k,v in data['chnlcode_config'].items():
+                        <option value="${k}">${v}</option>
+                        % endfor
+                    </select>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+             <div style="clear: both"></div>
+
+
+            <div class="form-inline">
+                <div class="col-md-offset-1 col-md-3">
+                    <label for="">关注公众号：</label>
+                </div>
+                <div class="col-md-8">
+                    <select name="" id="change_appname" class="selectpicker show-menu-arrow" data-live-search="true">
+
+                    </select>
+                </div>
+            </div>
+            <div style="clear: both"></div>
+            <div class="form-inline">
+                <div class="col-md-offset-1 col-md-3">
+                    <label for="">APPID：</label>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" id="c_appid" class="form-control" value="" readonly="readonly" style="width: 360px">
+##                     <input type="text" value="ssafsdfdas">
+                </div>
+            </div>
+            <div style="clear: both"></div>
+
+
+            <div class="form-inline">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label style="height: 34px;line-height: 34px">主体名称:</label>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <input type="text" id="main" class="form-control" value="" style="width: 365px" readonly="readonly" >
+                </div>
+                <div style="clear: both"></div>
+            </div>
+            <div style="clear: both"></div>
+
+
+            <div class="form-inline">
+                <div class="col-md-offset-1 col-md-3">
+                    <label style="height: 34px;line-height: 34px">微信渠道号:</label>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" id="cid" class="form-control" value="" readonly="readonly" style="width: 360px" >
+                </div>
+            </div>
+            <div style="clear: both"></div>
+
+            <div class="form-inline">
+                <div class="col-md-offset-1 col-md-3">
+                    <label>支付APPID:</label>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" id="pay_appid" class="form-control" value="" readonly="readonly" style="width: 360px"  >
+                </div>
+            </div>
+            <div style="clear: both"></div>
+            <div class="form-inline">
+                <div class="col-md-offset-1 col-md-3">
+                    <label>支&nbsp;付&nbsp;目&nbsp;录:</label>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" id="menu" value="" readonly="readonly" style="width: 360px" >
+                </div>
+            </div>
+            <div style="clear: both"></div>
+            <div class="form-inline">
+                <div class="col-md-offset-1 col-md-3">
+                    <label>备 注:</label>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" id="memo" value="" style="width: 360px" >
+                </div>
+            </div>
+            <div style="clear: both"></div>
+            <div style="margin-top: 40px">
+                <div class="col-md-offset-4 col-md-2" style="text-align: center">
+                    <button class="btn btn-primary" id="change_submit">提交</button>
+                </div>
+                <div class="col-md-2" style="text-align: center">
+                    <button class="btn btn-primary" id="change_cancel">取消</button>
+                </div>
+            </div>
+            <div style="clear: both"></div>
+        </div>
+    </div>
+</div>
+</%block>
